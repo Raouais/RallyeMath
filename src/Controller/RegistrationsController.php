@@ -16,11 +16,12 @@ class RegistrationsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index($editionID = null)
     {
-        $registrations = $this->paginate($this->Registrations);
+        $registrations = $this->paginate($this->Registrations->findByEditionid($editionID));
 
         $this->set(compact('registrations'));
+        $this->set(compact('editionID'));
     }
 
     /**
@@ -30,12 +31,13 @@ class RegistrationsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view($id = null, $editionID = null)
     {
         $registration = $this->Registrations->get($id, [
             'contain' => [],
         ]);
 
+        $this->set(compact('editionID'));
         $this->set(compact('registration'));
     }
 
@@ -44,18 +46,22 @@ class RegistrationsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add($editionID = null)
     {
         $registration = $this->Registrations->newEmptyEntity();
         if ($this->request->is('post')) {
+
+            var_dump($this->request->getData('students'));
+            var_dump($this->request->getData('schools'));
             $registration = $this->Registrations->patchEntity($registration, $this->request->getData());
             if ($this->Registrations->save($registration)) {
                 $this->Flash->success(__('The registration has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index', $editionID]);
             }
             $this->Flash->error(__('The registration could not be saved. Please, try again.'));
         }
+        $this->set(compact('editionID'));
         $this->set(compact('registration'));
     }
 
@@ -66,7 +72,7 @@ class RegistrationsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit($id = null, $editionID = null)
     {
         $registration = $this->Registrations->get($id, [
             'contain' => [],
@@ -76,10 +82,11 @@ class RegistrationsController extends AppController
             if ($this->Registrations->save($registration)) {
                 $this->Flash->success(__('The registration has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index', $editionID]);
             }
             $this->Flash->error(__('The registration could not be saved. Please, try again.'));
         }
+        $this->set(compact('editionID'));
         $this->set(compact('registration'));
     }
 
@@ -90,7 +97,7 @@ class RegistrationsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete($id = null, $editionID = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $registration = $this->Registrations->get($id);
@@ -100,6 +107,6 @@ class RegistrationsController extends AppController
             $this->Flash->error(__('The registration could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect(['action' => 'index', $editionID]);
     }
 }

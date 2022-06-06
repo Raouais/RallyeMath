@@ -28,9 +28,12 @@
                     <td><?= $this->Number->format($edition->nbStudentMin) ?></td>
                     <td><?= h($edition->schoolYear) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('Voir'), ['action' => 'view', $edition->id]) ?>
-                        <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $edition->id]) ?>
-                        <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $edition->id], ['confirm' => __('Are you sure you want to delete # {0}?', $edition->id)]) ?>
+                        <?= $this->Html->link(__("S'incrire"), ['controller' => 'registrations', 'action' => 'index', $edition->id]) ?>
+                        <?php if(false):?>                        
+                            <?= $this->Html->link(__('Voir'), ['action' => 'view', $edition->id]) ?>
+                            <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $edition->id]) ?>
+                            <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $edition->id], ['confirm' => __('Are you sure you want to delete # {0}?', $edition->id)]) ?>
+                        <?php endif?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

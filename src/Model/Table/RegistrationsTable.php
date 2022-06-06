@@ -55,14 +55,10 @@ class RegistrationsTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->boolean('isConfirm')
-            ->requirePresence('isConfirm', 'create')
-            ->notEmptyString('isConfirm');
+            ->boolean('isConfirm');
 
         $validator
-            ->boolean('isFinalist')
-            ->requirePresence('isFinalist', 'create')
-            ->notEmptyString('isFinalist');
+            ->boolean('isFinalist');
 
         $validator
             ->integer('editionId')
