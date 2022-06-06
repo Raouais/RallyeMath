@@ -8,20 +8,19 @@
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('List Deadlines'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Revenir à la liste'), ['action' => 'index', $editionID], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column-responsive column-80">
         <div class="deadlines form content">
             <?= $this->Form->create($deadline) ?>
             <fieldset>
-                <legend><?= __('Add Deadline') ?></legend>
+                <legend><?= __('Ajout Echéance') ?></legend>
                 <?php
-                    echo $this->Form->control('title');
-                    echo $this->Form->control('startdate');
-                    echo $this->Form->control('enddate');
-                    echo $this->Form->control('editionId');
-                    echo $this->Form->control('isLimit');
+                    echo $this->Form->control('title', ['label' => "Titre"]);
+                    echo $this->Form->control('startdate', ['label' => "Début"]);
+                    echo $this->Form->control('enddate', ['label' => "Fin"]);
+                    echo $this->Form->control('isLimit', ['label' => "Dernière échéance"]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

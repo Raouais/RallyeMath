@@ -36,7 +36,14 @@ class EditionsController extends AppController
             'contain' => [],
         ]);
 
+        $deadline = $this->getTableLocator()->get('Deadlines');
+        $deadlines = $deadline->find()->
+                select(['title','startdate','enddate'])->
+                where(['deadlines.editionId'=> $id]);
+        $deadlines = $this->paginate($deadlines, ['limit' => '1']);
+
         $this->set(compact('edition'));
+        $this->set(compact('deadlines'));
     }
 
     /**
@@ -102,4 +109,5 @@ class EditionsController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
 }

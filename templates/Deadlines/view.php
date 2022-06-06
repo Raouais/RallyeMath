@@ -8,10 +8,10 @@
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Deadline'), ['action' => 'edit', $deadline->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Deadline'), ['action' => 'delete', $deadline->id], ['confirm' => __('Are you sure you want to delete # {0}?', $deadline->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Deadlines'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Deadline'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Ajouter'), ['action' => 'add', $editionID], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $deadline->id, $editionID], ['class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $deadline->id, $editionID], ['confirm' => __('Are you sure you want to delete # {0}?', $deadline->id), 'class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Revenir à la lise'), ['action' => 'index', $editionID], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column-responsive column-80">
@@ -19,36 +19,28 @@
             <h3><?= h($deadline->title) ?></h3>
             <table>
                 <tr>
-                    <th><?= __('Title') ?></th>
+                    <th><?= __('Titre') ?></th>
                     <td><?= h($deadline->title) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($deadline->id) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('EditionId') ?></th>
-                    <td><?= $this->Number->format($deadline->editionId) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Startdate') ?></th>
+                    <th><?= __('Début') ?></th>
                     <td><?= h($deadline->startdate) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Enddate') ?></th>
+                    <th><?= __('Fin') ?></th>
                     <td><?= h($deadline->enddate) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Created') ?></th>
+                    <th><?= __('Créée') ?></th>
                     <td><?= h($deadline->created) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Modified') ?></th>
+                    <th><?= __('Modifiée') ?></th>
                     <td><?= h($deadline->modified) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('IsLimit') ?></th>
-                    <td><?= $deadline->isLimit ? __('Yes') : __('No'); ?></td>
+                    <th><?= __('Dernière échéance') ?></th>
+                    <td><?= $deadline->isLimit ? __('Oui') : __('Non'); ?></td>
                 </tr>
             </table>
         </div>

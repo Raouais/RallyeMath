@@ -16,11 +16,14 @@ class DeadlinesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index($editionID)
     {
-        $deadlines = $this->paginate($this->Deadlines);
+        $editionID == null ? $this->redirect(['controller' => 'editions', 'action' => 'index']) : false;
+
+        $deadlines = $this->paginate($this->Deadlines->findByEditionid($editionID),  ['limit' => '3']);
 
         $this->set(compact('deadlines'));
+        $this->set(compact('editionID'));
     }
 
     /**
@@ -30,13 +33,16 @@ class DeadlinesController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view($id = null, $editionID = null)
     {
+        $editionID == null ? $this->redirect(['controller' => 'editions', 'action' => 'index']) : false;
+
         $deadline = $this->Deadlines->get($id, [
             'contain' => [],
         ]);
 
         $this->set(compact('deadline'));
+        $this->set(compact('editionID'));
     }
 
     /**
@@ -44,19 +50,23 @@ class DeadlinesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add($editionID = null)
     {
+        $editionID == null ? $this->redirect(['controller' => 'editions', 'action' => 'index']) : false;
+
         $deadline = $this->Deadlines->newEmptyEntity();
         if ($this->request->is('post')) {
             $deadline = $this->Deadlines->patchEntity($deadline, $this->request->getData());
+            $deadline->editionId = $editionID;
             if ($this->Deadlines->save($deadline)) {
                 $this->Flash->success(__('The deadline has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index', $editionID]);
             }
             $this->Flash->error(__('The deadline could not be saved. Please, try again.'));
         }
         $this->set(compact('deadline'));
+        $this->set(compact('editionID'));
     }
 
     /**
@@ -66,13 +76,16 @@ class DeadlinesController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit($id = null, $editionID = null)
     {
+        $editionID == null ? $this->redirect(['controller' => 'editions', 'action' => 'index']) : false;
+
         $deadline = $this->Deadlines->get($id, [
             'contain' => [],
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $deadline = $this->Deadlines->patchEntity($deadline, $this->request->getData());
+            $deadline->editionId = $editionID;
             if ($this->Deadlines->save($deadline)) {
                 $this->Flash->success(__('The deadline has been saved.'));
 
@@ -81,6 +94,7 @@ class DeadlinesController extends AppController
             $this->Flash->error(__('The deadline could not be saved. Please, try again.'));
         }
         $this->set(compact('deadline'));
+        $this->set(compact('editionID'));
     }
 
     /**
@@ -90,8 +104,10 @@ class DeadlinesController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete($id = null, $editionID = null)
     {
+        $editionID == null ? $this->redirect(['controller' => 'editions', 'action' => 'index']) : false;
+
         $this->request->allowMethod(['post', 'delete']);
         $deadline = $this->Deadlines->get($id);
         if ($this->Deadlines->delete($deadline)) {
@@ -100,6 +116,7 @@ class DeadlinesController extends AppController
             $this->Flash->error(__('The deadline could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect(['action' => 'index', $editionID]);
     }
+
 }

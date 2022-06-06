@@ -19,7 +19,7 @@
             <h3><?= h($edition->title) ?></h3>
             <table>
                 <tr>
-                    <th><?= __('Title') ?></th>
+                    <th><?= __('Titre') ?></th>
                     <td><?= h($edition->title) ?></td>
                 </tr>
                 <tr>
@@ -27,34 +27,87 @@
                     <td><?= h($edition->description) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('SchoolYear') ?></th>
+                    <th><?= __('Année scolaire') ?></th>
                     <td><?= h($edition->schoolYear) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($edition->id) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('NbStudentMax') ?></th>
+                    <th><?= __("Nombre d'étudiants maximum") ?></th>
                     <td><?= $this->Number->format($edition->nbStudentMax) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('NbStudentMin') ?></th>
+                    <th><?= __("Nombre d'étudiants minimum") ?></th>
                     <td><?= $this->Number->format($edition->nbStudentMin) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Created') ?></th>
+                    <th><?= __('Créée') ?></th>
                     <td><?= h($edition->created) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Modified') ?></th>
+                    <th><?= __('Modifiée') ?></th>
                     <td><?= h($edition->modified) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Ajouts') ?></th>
-                    <td> 
-                        <?= $this->Html->link(__('Photos'), ['controller' => 'files' ,'action' => 'edit', $edition->id]) ?>
-                        <?= $this->Html->link(__('Echeances'), ['controller' => 'deadlines', 'action' => 'edit', $edition->id]) ?>
+                    <th><?= __('Echéances') ?></th>
+                    <td>
+                        <table>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Début</th>
+                                <th>Fin</th>
+                            </tr>
+                            <?php foreach($deadlines as $d): ?>
+                                <tr>
+                                    <td>
+                                        <?= $d->title ?>
+                                    </td>
+                                    <td>
+                                        <?= h($d->startdate) ?>
+                                    </td>
+                                    <td>
+                                        <?= h($d->enddate) ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach;?>
+                        </table>
+                        <?= $this->Html->link('Tout voir', ['controller' => 'deadlines', 'action' => 'index', $edition->id], ['class' => 'button']) ?>
+                        <br>
+                        <ul class="pagination">
+                            <?=$this->Paginator->prev("<<")?>
+                            <?=$this->Paginator->numbers()?>
+                            <?=$this->Paginator->next(">>")?>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?= __('Photos') ?></th>
+                    <td>
+                        <table>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Début</th>
+                                <th>Fin</th>
+                            </tr>
+                            <?php foreach($deadlines as $d): ?>
+                                <tr>
+                                    <td>
+                                        <?= $d->title ?>
+                                    </td>
+                                    <td>
+                                        <?= h($d->startdate) ?>
+                                    </td>
+                                    <td>
+                                        <?= h($d->enddate) ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach;?>
+                        </table>
+                        <?= $this->Html->link('Tout voir', ['controller' => 'deadlines', 'action' => 'index', $edition->id], ['class' => 'button']) ?>
+                        <br>
+                        <ul class="pagination">
+                            <?=$this->Paginator->prev("<<")?>
+                            <?=$this->Paginator->numbers()?>
+                            <?=$this->Paginator->next(">>")?>
+                        </ul>
                     </td>
                 </tr>
             </table>

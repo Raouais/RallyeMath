@@ -11,19 +11,17 @@
         <table>
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('title') ?></th>
+                    <th><?= $this->Paginator->sort('Titre') ?></th>
                     <th><?= $this->Paginator->sort('description') ?></th>
-                    <th><?= $this->Paginator->sort('nbStudentMax') ?></th>
-                    <th><?= $this->Paginator->sort('nbStudentMin') ?></th>
-                    <th><?= $this->Paginator->sort('schoolYear') ?></th>
+                    <th><?= $this->Paginator->sort('Nb max étudiants') ?></th>
+                    <th><?= $this->Paginator->sort('Nb min étudiants') ?></th>
+                    <th><?= $this->Paginator->sort('Année scolaire') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($editions as $edition): ?>
                 <tr>
-                    <td><?= $this->Number->format($edition->id) ?></td>
                     <td><?= h($edition->title) ?></td>
                     <td><?= h($edition->description) ?></td>
                     <td><?= $this->Number->format($edition->nbStudentMax) ?></td>
