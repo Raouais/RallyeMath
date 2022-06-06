@@ -16,9 +16,9 @@ class DeadlinesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index($editionID)
+    public function index($editionID = null)
     {
-        $editionID == null ? $this->redirect(['controller' => 'editions', 'action' => 'index']) : false;
+        if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
 
         $deadlines = $this->paginate($this->Deadlines->findByEditionid($editionID),  ['limit' => '3']);
 
@@ -35,7 +35,7 @@ class DeadlinesController extends AppController
      */
     public function view($id = null, $editionID = null)
     {
-        $editionID == null ? $this->redirect(['controller' => 'editions', 'action' => 'index']) : false;
+        if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
 
         $deadline = $this->Deadlines->get($id, [
             'contain' => [],
@@ -52,7 +52,7 @@ class DeadlinesController extends AppController
      */
     public function add($editionID = null)
     {
-        $editionID == null ? $this->redirect(['controller' => 'editions', 'action' => 'index']) : false;
+        if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
 
         $deadline = $this->Deadlines->newEmptyEntity();
         if ($this->request->is('post')) {
@@ -78,7 +78,7 @@ class DeadlinesController extends AppController
      */
     public function edit($id = null, $editionID = null)
     {
-        $editionID == null ? $this->redirect(['controller' => 'editions', 'action' => 'index']) : false;
+        if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
 
         $deadline = $this->Deadlines->get($id, [
             'contain' => [],
@@ -106,7 +106,7 @@ class DeadlinesController extends AppController
      */
     public function delete($id = null, $editionID = null)
     {
-        $editionID == null ? $this->redirect(['controller' => 'editions', 'action' => 'index']) : false;
+        if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
 
         $this->request->allowMethod(['post', 'delete']);
         $deadline = $this->Deadlines->get($id);
