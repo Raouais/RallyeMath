@@ -9,22 +9,21 @@
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
             <?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $file->id],
+                __('Supprimer'),
+                ['action' => 'delete', $file->id, $editionID],
                 ['confirm' => __('Are you sure you want to delete # {0}?', $file->id), 'class' => 'side-nav-item']
             ) ?>
-            <?= $this->Html->link(__('List Files'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Revenir à la liste'), ['action' => 'index', $editionID], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column-responsive column-80">
         <div class="files form content">
-            <?= $this->Form->create($file) ?>
+            <?= $this->Form->create($file, ['type' => 'file']) ?>
             <fieldset>
-                <legend><?= __('Edit File') ?></legend>
+                <legend><?= __('Modifier la photo') ?></legend>
                 <?php
-                    echo $this->Form->control('path');
-                    echo $this->Form->control('type');
-                    echo $this->Form->control('editionId');
+                    echo $this->Form->control('path', ['type' => 'file']);
+                    echo $this->Form->control('type', ['default' => 'image', 'type' => 'hidden']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

@@ -83,25 +83,17 @@
                     <td>
                         <table>
                             <tr>
-                                <th>Titre</th>
-                                <th>Début</th>
-                                <th>Fin</th>
+                                <th>Photos</th>
                             </tr>
-                            <?php foreach($deadlines as $d): ?>
+                            <?php foreach($images as $i): ?>
                                 <tr>
                                     <td>
-                                        <?= $d->title ?>
-                                    </td>
-                                    <td>
-                                        <?= h($d->startdate) ?>
-                                    </td>
-                                    <td>
-                                        <?= h($d->enddate) ?>
+                                        <?= $this->Html->image($i->name) ?>
                                     </td>
                                 </tr>
                             <?php endforeach;?>
                         </table>
-                        <?= $this->Html->link('Tout voir', ['controller' => 'deadlines', 'action' => 'index', $edition->id], ['class' => 'button']) ?>
+                        <?= $this->Html->link('Tout voir', ['controller' => 'files', 'action' => 'index', $edition->id], ['class' => 'button']) ?>
                         <br>
                         <ul class="pagination">
                             <?=$this->Paginator->prev("<<")?>

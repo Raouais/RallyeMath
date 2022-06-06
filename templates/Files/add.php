@@ -8,7 +8,7 @@
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('List Files'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Revenir à la liste'), ['action' => 'index', $editionID], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column-responsive column-80">
@@ -17,8 +17,8 @@
             <fieldset>
                 <legend><?= __('Ajouter une photo') ?></legend>
                 <?php
-                    echo $this->Form->control('type', ['default' => 'image']);
-                    echo $this->Form->control('path', ['type' => 'file']);
+                    echo $this->Form->control('type', ['default' => 'image', 'type' => 'hidden']);
+                    echo $this->Form->control('path', ['type' => 'file', 'label' => 'Fichier']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>
