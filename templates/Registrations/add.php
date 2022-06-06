@@ -32,7 +32,6 @@
                         'students', 
                         $options,
                     ['multiple' => 'checkbox']);
-                    echo $this->Form->control('editionId');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

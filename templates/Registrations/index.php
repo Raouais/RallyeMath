@@ -22,11 +22,9 @@
             <tbody>
                 <?php foreach ($registrations as $registration): ?>
                 <tr>
-                    <td><?= h($registration->isConfirm) ?></td>
-                    <td><?= h($registration->isFinalist) ?></td>
-                    <td><?= $this->Number->format($registration->editionId) ?></td>
-                    <td><?= h($registration->created) ?></td>
-                    <td><?= h($registration->modified) ?></td>
+                    <td><?= h($registration->isConfirm ? "Oui" : "Non") ?></td>
+                    <td><?= h($registration->isFinalist ? "Oui" : "Non") ?></td>
+                    <td><?= h($editionName) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('Voir'), ['action' => 'view', $registration->id, $editionID]) ?>
                         <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $registration->id, $editionID]) ?>

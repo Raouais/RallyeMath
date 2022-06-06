@@ -19,20 +19,24 @@
             <h3><?= h($registration->id) ?></h3>
             <table>
                 <tr>
-                    <th><?= __('Created') ?></th>
+                    <th><?= __('Confirmée') ?></th>
+                    <td><?= $registration->isConfirm ? __('Oui') : __('Non'); ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('En finale') ?></th>
+                    <td><?= $registration->isFinalist ? __('Oui') : __('Non'); ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Edition') ?></th>
+                    <td><?= h($editionName) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Créée') ?></th>
                     <td><?= h($registration->created) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Modified') ?></th>
+                    <th><?= __('Modifiée') ?></th>
                     <td><?= h($registration->modified) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('IsConfirm') ?></th>
-                    <td><?= $registration->isConfirm ? __('Yes') : __('No'); ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('IsFinalist') ?></th>
-                    <td><?= $registration->isFinalist ? __('Yes') : __('No'); ?></td>
                 </tr>
             </table>
         </div>

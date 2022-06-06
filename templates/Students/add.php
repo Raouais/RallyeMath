@@ -8,19 +8,17 @@
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('List Students'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Revenir à la liste'), ['action' => 'index', $schoolID], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column-responsive column-80">
         <div class="students form content">
             <?= $this->Form->create($student) ?>
             <fieldset>
-                <legend><?= __('Add Student') ?></legend>
+                <legend><?= __('Ajout') ?></legend>
                 <?php
-                    echo $this->Form->control('lastname');
-                    echo $this->Form->control('firstname');
-                    echo $this->Form->control('schoolId');
-                    echo $this->Form->control('registrationId');
+                    echo $this->Form->control('lastname', ['label' => 'Nom']);
+                    echo $this->Form->control('firstname', ['label' => 'Prénom']); 
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

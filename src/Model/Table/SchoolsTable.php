@@ -84,9 +84,7 @@ class SchoolsTable extends Table
             ->notEmptyString('userId');
 
         $validator
-            ->integer('registrationId')
-            ->requirePresence('registrationId', 'create')
-            ->notEmptyString('registrationId');
+            ->integer('registrationId');
 
         return $validator;
     }

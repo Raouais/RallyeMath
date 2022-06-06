@@ -22,9 +22,8 @@
             <fieldset>
                 <legend><?= __('Modification') ?></legend>
                 <?php
-                    echo $this->Form->control('isConfirm');
-                    echo $this->Form->control('isFinalist');
-                    echo $this->Form->control('editionId');
+                    echo $this->Form->control('isConfirm', ['label' => 'Conrfimée']);
+                    echo $this->Form->control('isFinalist', ['label' => 'En finale']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

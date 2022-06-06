@@ -18,10 +18,13 @@ class RegistrationsController extends AppController
      */
     public function index($editionID = null)
     {
+        $edition = $this->getTableLocator()->get('Editions');
+        $editionName = $edition->findById($editionID)->firstOrFail()->title;
         $registrations = $this->paginate($this->Registrations->findByEditionid($editionID));
 
         $this->set(compact('registrations'));
         $this->set(compact('editionID'));
+        $this->set(compact('editionName'));
     }
 
     /**
@@ -37,7 +40,11 @@ class RegistrationsController extends AppController
             'contain' => [],
         ]);
 
+        $edition = $this->getTableLocator()->get('Editions');
+        $editionName = $edition->findById($editionID)->firstOrFail()->title;
+
         $this->set(compact('editionID'));
+        $this->set(compact('editionName'));
         $this->set(compact('registration'));
     }
 
@@ -48,6 +55,9 @@ class RegistrationsController extends AppController
      */
     public function add($editionID = null)
     {
+
+        $edition = $this->getTableLocator()->get('Editions');
+        $editionName = $edition->findById($editionID)->firstOrFail()->title;
         $registration = $this->Registrations->newEmptyEntity();
         if ($this->request->is('post')) {
 
@@ -62,6 +72,7 @@ class RegistrationsController extends AppController
             $this->Flash->error(__('The registration could not be saved. Please, try again.'));
         }
         $this->set(compact('editionID'));
+        $this->set(compact('editionName'));
         $this->set(compact('registration'));
     }
 
@@ -74,6 +85,8 @@ class RegistrationsController extends AppController
      */
     public function edit($id = null, $editionID = null)
     {
+        $edition = $this->getTableLocator()->get('Editions');
+        $editionName = $edition->findById($editionID)->firstOrFail()->title;
         $registration = $this->Registrations->get($id, [
             'contain' => [],
         ]);
@@ -87,6 +100,7 @@ class RegistrationsController extends AppController
             $this->Flash->error(__('The registration could not be saved. Please, try again.'));
         }
         $this->set(compact('editionID'));
+        $this->set(compact('editionName'));
         $this->set(compact('registration'));
     }
 
