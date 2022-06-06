@@ -8,10 +8,10 @@
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Edition'), ['action' => 'edit', $edition->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Edition'), ['action' => 'delete', $edition->id], ['confirm' => __('Are you sure you want to delete # {0}?', $edition->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Editions'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Edition'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Ajouter'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $edition->id], ['class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $edition->id], ['confirm' => __('Are you sure you want to delete # {0}?', $edition->id), 'class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Revenir à la liste'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column-responsive column-80">
@@ -49,6 +49,13 @@
                 <tr>
                     <th><?= __('Modified') ?></th>
                     <td><?= h($edition->modified) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Ajouts') ?></th>
+                    <td> 
+                        <?= $this->Html->link(__('Photos'), ['controller' => 'files' ,'action' => 'edit', $edition->id]) ?>
+                        <?= $this->Html->link(__('Echeances'), ['controller' => 'deadlines', 'action' => 'edit', $edition->id]) ?>
+                    </td>
                 </tr>
             </table>
         </div>

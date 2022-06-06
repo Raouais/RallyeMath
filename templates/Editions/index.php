@@ -17,8 +17,6 @@
                     <th><?= $this->Paginator->sort('nbStudentMax') ?></th>
                     <th><?= $this->Paginator->sort('nbStudentMin') ?></th>
                     <th><?= $this->Paginator->sort('schoolYear') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
@@ -31,12 +29,10 @@
                     <td><?= $this->Number->format($edition->nbStudentMax) ?></td>
                     <td><?= $this->Number->format($edition->nbStudentMin) ?></td>
                     <td><?= h($edition->schoolYear) ?></td>
-                    <td><?= h($edition->created) ?></td>
-                    <td><?= h($edition->modified) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $edition->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $edition->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $edition->id], ['confirm' => __('Are you sure you want to delete # {0}?', $edition->id)]) ?>
+                        <?= $this->Html->link(__('Voir'), ['action' => 'view', $edition->id]) ?>
+                        <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $edition->id]) ?>
+                        <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $edition->id], ['confirm' => __('Are you sure you want to delete # {0}?', $edition->id)]) ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
