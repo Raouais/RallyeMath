@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Event\EventInterface;
+
 /**
  * Users Controller
  *
@@ -101,5 +103,47 @@ class UsersController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function beforeFilter(EventInterface $event){
+        parent::beforeFilter($event);
+        $this->Authentication->allowUnauthenticated(['login']);
+        $this->Authentication->addUnauthenticatedActions([
+            'login',
+            'add',
+        ]);
+    }
+
+    public function login(){
+        $this->request->allowMethod(['get', 'post']);
+        
+        // $this->Authorization->skipAuthorization();
+        /**
+         * @var \Authentication\Authenticator\ResultInterface
+         */
+        $result = $this->Authentication->getResult();
+
+        if($result->isValid()){
+            $redirect = $this->request->getQuery('redirect', [
+                'controller' => 'pages',
+                'action' => 'home'
+            ]);
+            return $this->redirect($redirect);
+        } else if($this->request->is('post')){
+            $this->Flash->error('Connexion échouée.');
+        }
+    }
+
+    public function logout(){
+        // $this->Authorization->skipAuthorization();
+        /**
+         * @var \Authentication\Authenticator\ResultInterface
+         */
+
+        $result = $this->Authentication->getResult();
+        if($result->isValid()){
+            $this->Authentication->logout();
+            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        }
     }
 }

@@ -8,10 +8,10 @@
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit User'), ['action' => 'edit', $user->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete User'), ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Users'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New User'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $user->id], ['class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id), 'class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Revenir à la liste'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Ajouter'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column-responsive column-80">
@@ -19,11 +19,11 @@
             <h3><?= h($user->id) ?></h3>
             <table>
                 <tr>
-                    <th><?= __('Lastname') ?></th>
+                    <th><?= __('Nom') ?></th>
                     <td><?= h($user->lastname) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Firstname') ?></th>
+                    <th><?= __('Prénom') ?></th>
                     <td><?= h($user->firstname) ?></td>
                 </tr>
                 <tr>
@@ -31,31 +31,23 @@
                     <td><?= h($user->email) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Function') ?></th>
+                    <th><?= __('Fonction') ?></th>
                     <td><?= h($user->function) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Phone') ?></th>
+                    <th><?= __('Téléphone') ?></th>
                     <td><?= h($user->phone) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Civility') ?></th>
-                    <td><?= h($user->civility) ?></td>
+                    <th><?= __('Civilité') ?></th>
+                    <td><?= h($user->civility == 1 ? "Mme.": "M.") ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($user->id) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('IsAdmin') ?></th>
-                    <td><?= $user->isAdmin === null ? '' : $this->Number->format($user->isAdmin) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Created') ?></th>
+                    <th><?= __('Créé') ?></th>
                     <td><?= h($user->created) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Modified') ?></th>
+                    <th><?= __('Modifié') ?></th>
                     <td><?= h($user->modified) ?></td>
                 </tr>
             </table>
