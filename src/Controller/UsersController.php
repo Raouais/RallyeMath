@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Auth\DefaultPasswordHasher;
 use Cake\Event\EventInterface;
 
 /**
@@ -48,6 +49,8 @@ class UsersController extends AppController
      */
     public function add()
     {
+        
+        $this->Authorization->skipAuthorization();
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
@@ -111,10 +114,13 @@ class UsersController extends AppController
         $this->Authentication->addUnauthenticatedActions([
             'login',
             'add',
+            'logout'
         ]);
     }
 
     public function login(){
+        
+        $this->Authorization->skipAuthorization();
         $this->request->allowMethod(['get', 'post']);
         
         // $this->Authorization->skipAuthorization();
@@ -140,6 +146,7 @@ class UsersController extends AppController
          * @var \Authentication\Authenticator\ResultInterface
          */
 
+        $this->Authorization->skipAuthorization();
         $result = $this->Authentication->getResult();
         if($result->isValid()){
             $this->Authentication->logout();

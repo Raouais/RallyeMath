@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,10 +15,12 @@
  * @var \App\View\AppView $this
  */
 
-$cakeDescription = 'CakePHP: the rapid development php framework';
+$isConnected = isset($_SESSION['Auth']);
+$cakeDescription = 'RALLYE MATHÉMATIQUE';
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,30 +31,90 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     <?= $this->Html->meta('icon') ?>
 
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake']) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
+
 <body>
-    <nav class="top-nav">
-        <div class="top-nav-title">
-            <a href="<?= $this->Url->build('/') ?>"><span>Cake</span>PHP</a>
-        </div>
-        <div class="top-nav-links">
-            <a target="_blank" rel="noopener" href="https://book.cakephp.org/4/">Documentation</a>
-            <a target="_blank" rel="noopener" href="https://api.cakephp.org/">API</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="home">
+                <?= $this->Html->image("Logo/LOGO_rallye_math.JPG", [
+                    "width" => 80,
+                    "alt" => "HERS",
+                    "url" => ['controller' => 'pages', 'action' => 'home']
+                ]) ?>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <?= $this->Html->link(
+                            __('Editions'),
+                            ['controller' => 'editions', 'action' => 'index'],
+                            ['class' => 'nav-link active', 'aria-current' => 'page']
+                        ) ?>
+                    </li>
+                    <?php if ($isConnected) : ?>
+                        <li class="nav-item">
+                            <?= $this->Html->link(__('S\'inscrire'), ['controller' => 'users', 'action' => 'add'], ['class' => 'nav-link']) ?>
+                        </li>
+                    <?php endif ?>
+                    <li class="nav-item">
+                        <?= $this->Html->link(__('S\'enregistrer'), ['action' => 'view'], ['class' => 'nav-link']) ?>
+                    </li>
+                    <li class="nav-item">
+                        <?= $this->Html->link(
+                            __('Se connecter'),
+                            ['controller' => 'users', 'action' => 'login'],
+                            ['class' => 'nav-link']
+                        ) ?>
+                    </li>
+                </ul>
+                <?php if ($isConnected) : ?>
+                    <span class="navbar-text">
+                        <?= $this->Html->link(
+                            __('Se déconnecter'),
+                            ['controller' => 'users', 'action' => 'logout']
+                        ) ?>
+                    </span>
+                <?php endif ?>
+                <span class="navbar-text">
+                    <?= $this->Html->image("Logo/Logo/LOGO GENERAL/LOGO-Blanc-FondTransp.png", [
+                        "width" => 80,
+                        "alt" => "HERS",
+                    ]); ?>
+                </span>
+            </div>
         </div>
     </nav>
-    <main class="main">
+
+    <main class="main" style="padding-bottom: 2.5rem">
         <div class="container">
+            <br>
             <?= $this->Flash->render() ?>
             <?= $this->fetch('content') ?>
         </div>
     </main>
-    <footer>
-    </footer>
+    <div class="container-fluid" style="margin-top: auto;">
+        <footer id="footer" class="py-3 my-4 bg-dark ">
+            <!-- <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Features</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Pricing</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
+            </ul> -->
+            <p class="text-center text-muted">© 2022 HERS, Site Web réalisé par un étudiant en informatique.</p>
+        </footer>
+    </div>
 </body>
+
 </html>
