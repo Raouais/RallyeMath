@@ -64,19 +64,23 @@ $cakeDescription = 'RALLYE MATHÉMATIQUE';
                     </li>
                     <?php if ($isConnected) : ?>
                         <li class="nav-item">
-                            <?= $this->Html->link(__('S\'inscrire'), ['controller' => 'users', 'action' => 'add'], ['class' => 'nav-link']) ?>
+                            <?= $this->Html->link(__('S\'inscrire'), ['controller' => 'editions', 'action' => 'index'], ['class' => 'nav-link']) ?>
                         </li>
                     <?php endif ?>
-                    <li class="nav-item">
-                        <?= $this->Html->link(__('S\'enregistrer'), ['action' => 'view'], ['class' => 'nav-link']) ?>
-                    </li>
-                    <li class="nav-item">
-                        <?= $this->Html->link(
-                            __('Se connecter'),
-                            ['controller' => 'users', 'action' => 'login'],
-                            ['class' => 'nav-link']
-                        ) ?>
-                    </li>
+                    <?php if (!$isConnected) : ?>
+                        <li class="nav-item">
+                            <?= $this->Html->link(__('S\'enregistrer'), ['controller' => 'users','action' => 'add'], ['class' => 'nav-link']) ?>
+                        </li>
+                    <?php endif ?>
+                    <?php if (!$isConnected) : ?>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
+                                __('Se connecter'),
+                                ['controller' => 'users', 'action' => 'login'],
+                                ['class' => 'nav-link']
+                            ) ?>
+                        </li>
+                    <?php endif ?>
                 </ul>
                 <?php if ($isConnected) : ?>
                     <span class="navbar-text">

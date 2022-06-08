@@ -54,12 +54,17 @@ class UsersController extends AppController
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
-
+            $user->isAdmin = 0; // Les admins ne sont pas inscrit mais encodés
+            if($this->request->getData('password_confirm') !== $this->request->getData('password')){
+                $this->Flash->error(__('Les mots de passes doivent être identiques.'));
+            } else if ($this->Users->save($user)) {
+                $this->Flash->success(__("L'utilisateur a été ajouté avec succès"));
+                if($this->Authentication->getResult()->isValid()){
+                    return $this->redirect(['controller' => 'pages', 'action' => 'home']);
+                }
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__("L'utilisateur n'a pas pu être ajouté. Veuillez réessayer s'il vous plaît."));
         }
         $this->set(compact('user'));
     }
@@ -79,11 +84,11 @@ class UsersController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
+                $this->Flash->success(__("L'utilisateur a été ajouté avec succès"));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__("'L'utilisateur n'a pas pu être modifié. Veuillez réessayer s'il vous plaît.'"));
         }
         $this->set(compact('user'));
     }
@@ -102,7 +107,7 @@ class UsersController extends AppController
         if ($this->Users->delete($user)) {
             $this->Flash->success(__('The user has been deleted.'));
         } else {
-            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+            $this->Flash->error(__("L'utilisateur n'a pas pu être modifié"));
         }
 
         return $this->redirect(['action' => 'index']);
@@ -150,7 +155,8 @@ class UsersController extends AppController
         $result = $this->Authentication->getResult();
         if($result->isValid()){
             $this->Authentication->logout();
-            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+            return $this->redirect(['controller' => 'pages', 'action' => 'home']);
         }
+        return $this->redirect(['controller' => 'Users', 'action' => 'login']);
     }
 }

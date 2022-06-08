@@ -5,7 +5,9 @@
  */
 ?>
 <div class="editions index content">
-    <?= $this->Html->link(__('New Edition'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+<?php if($isAdmin):?>    
+    <?= $this->Html->link(__('Ajouter'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+<?php endif?>
     <h3><?= __('Editions') ?></h3>
     <div class="table-responsive">
         <table>
@@ -28,8 +30,9 @@
                     <td><?= $this->Number->format($edition->nbStudentMin) ?></td>
                     <td><?= h($edition->schoolYear) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__("S'incrire"), ['controller' => 'registrations', 'action' => 'index', $edition->id]) ?>
-                        <?php if(false):?>                        
+                        <?php if(!$isAdmin):?>                        
+                            <?= $this->Html->link(__("S'inscrire"), ['controller' => 'registrations', 'action' => 'index', $edition->id]) ?>
+                        <?php else:?>                        
                             <?= $this->Html->link(__('Voir'), ['action' => 'view', $edition->id]) ?>
                             <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $edition->id]) ?>
                             <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $edition->id], ['confirm' => __('Are you sure you want to delete # {0}?', $edition->id)]) ?>

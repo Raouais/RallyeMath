@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Authorization\Exception\ForbiddenException;
+
 /**
  * Editions Controller
  *
@@ -18,9 +20,12 @@ class EditionsController extends AppController
      */
     public function index()
     {
+        $this->Authorization->skipAuthorization();
         $editions = $this->paginate($this->Editions);
-
+        $isAdmin = $this->Authentication->getResult()->getData()->isAdmin == 1;
+        // $this->Authorization->authorize($editions,'index');
         $this->set(compact('editions'));
+        $this->set(compact('isAdmin'));
     }
 
     /**
@@ -35,6 +40,13 @@ class EditionsController extends AppController
         $edition = $this->Editions->get($id, [
             'contain' => [],
         ]);
+
+        try{
+            $this->Authorization->authorize($edition);
+        } catch(ForbiddenException $e){
+            $this->Flash->error("Vous n'avez pas l'autorisation.");
+            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+        }
 
         $deadline = $this->getTableLocator()->get('Deadlines');
         $deadlines = $deadline->find()->
@@ -61,6 +73,14 @@ class EditionsController extends AppController
     public function add()
     {
         $edition = $this->Editions->newEmptyEntity();
+
+        try{
+            $this->Authorization->authorize($edition);
+        } catch(ForbiddenException $e){
+            $this->Flash->error("Vous n'avez pas l'autorisation.");
+            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+        }
+
         if ($this->request->is('post')) {
             $edition = $this->Editions->patchEntity($edition, $this->request->getData());
             if ($this->Editions->save($edition)) {
@@ -85,6 +105,14 @@ class EditionsController extends AppController
         $edition = $this->Editions->get($id, [
             'contain' => [],
         ]);
+       
+        try{
+            $this->Authorization->authorize($edition);
+        } catch(ForbiddenException $e){
+            $this->Flash->error("Vous n'avez pas l'autorisation.");
+            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+        }
+        
         if ($this->request->is(['patch', 'post', 'put'])) {
             $edition = $this->Editions->patchEntity($edition, $this->request->getData());
             if ($this->Editions->save($edition)) {
@@ -108,6 +136,14 @@ class EditionsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $edition = $this->Editions->get($id);
+
+        try{
+            $this->Authorization->authorize($edition);
+        } catch(ForbiddenException $e){
+            $this->Flash->error("Vous n'avez pas l'autorisation.");
+            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+        }
+        
         if ($this->Editions->delete($edition)) {
             $this->Flash->success(__('The edition has been deleted.'));
         } else {
