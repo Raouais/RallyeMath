@@ -57,11 +57,11 @@ class StudentsController extends AppController
             $student = $this->Students->patchEntity($student, $this->request->getData());
             $student->schoolId = $schoolID;
             if ($this->Students->save($student)) {
-                $this->Flash->success(__('The student has been saved.'));
+                $this->Flash->success(__("L'étudiant a été ajouté avec succès."));
 
                 return $this->redirect(['action' => 'index', $schoolID]);
             }
-            $this->Flash->error(__('The student could not be saved. Please, try again.'));
+            $this->Flash->error(__("L'étudiant n'a pas pu être ajouté. Veuillez réessayer"));
         }
         $this->set(compact('student'));
         $this->set(compact('schoolID'));
@@ -84,11 +84,11 @@ class StudentsController extends AppController
             $student = $this->Students->patchEntity($student, $this->request->getData());
             $student->schoolId = $schoolID;
             if ($this->Students->save($student)) {
-                $this->Flash->success(__('The student has been saved.'));
+                $this->Flash->success(__("L'étudiant a été modifié avec succès."));
 
                 return $this->redirect(['action' => 'index', $schoolID]);
             }
-            $this->Flash->error(__('The student could not be saved. Please, try again.'));
+            $this->Flash->error(__("L'étudiant n'a pu être modifié. Veuillez réessayer s'il vous plaît."));
         }
         $this->set(compact('student'));
         $this->set(compact('schoolID'));
@@ -107,9 +107,9 @@ class StudentsController extends AppController
         $student = $this->Students->get($id);
         $this->authorize($student);
         if ($this->Students->delete($student)) {
-            $this->Flash->success(__('The student has been deleted.'));
+            $this->Flash->success(__("L'étudiant à été supprimé."));
         } else {
-            $this->Flash->error(__('The student could not be deleted. Please, try again.'));
+            $this->Flash->error(__("L'étudiant n'a pu être supprimé. Veuillez réessayer s'il vous plaît."));
         }
 
         return $this->redirect(['action' => 'index', $schoolID]);

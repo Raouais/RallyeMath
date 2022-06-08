@@ -3,6 +3,13 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Registration $registration
  */
+
+$options = [];
+
+foreach($students as $s){
+    $options[$s->id] = "  ".$s->lastname." ".$s->firstname; 
+}
+
 ?>
 <div class="row">
     <aside class="column">
@@ -22,8 +29,16 @@
             <fieldset>
                 <legend><?= __('Modification') ?></legend>
                 <?php
-                    echo $this->Form->control('isConfirm', ['label' => 'Conrfimée']);
-                    echo $this->Form->control('isFinalist', ['label' => 'En finale']);
+                    if($isAdmin){
+                        echo $this->Form->control('isConfirm', ['label' => 'Conrfimée']);
+                        echo $this->Form->control('isFinalist', ['label' => 'En finale']);
+                    } else {
+                        echo '<label>Choisissez les élèves participants</label>';
+                        echo $this->Form->select(
+                            'students', 
+                            $options,
+                        ['multiple' => 'checkbox']);
+                    }
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

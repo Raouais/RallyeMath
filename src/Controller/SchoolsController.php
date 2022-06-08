@@ -54,11 +54,11 @@ class SchoolsController extends AppController
         if ($this->request->is('post')) {
             $school = $this->Schools->patchEntity($school, $this->request->getData());
             if ($this->Schools->save($school)) {
-                $this->Flash->success(__('The school has been saved.'));
+                $this->Flash->success(__("L'école a été ajoutée avec succès."));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The school could not be saved. Please, try again.'));
+            $this->Flash->error(__("L'école n'a pas pu être ajoutée. Veuillez réessayer s'il vous plaît."));
         }
         $this->set(compact('school'));
     }
@@ -79,11 +79,11 @@ class SchoolsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $school = $this->Schools->patchEntity($school, $this->request->getData());
             if ($this->Schools->save($school)) {
-                $this->Flash->success(__('The school has been saved.'));
+                $this->Flash->success(__("L'école a été modifiée avec succès."));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The school could not be saved. Please, try again.'));
+            $this->Flash->error(__("L'école n'a pu être modifiée. Veuillez réessayer s'il vous plaît."));
         }
         $this->set(compact('school'));
     }
@@ -101,9 +101,9 @@ class SchoolsController extends AppController
         $school = $this->Schools->get($id);
         $this->authorize($school);
         if ($this->Schools->delete($school)) {
-            $this->Flash->success(__('The school has been deleted.'));
+            $this->Flash->success(__("L'école a été supprimée avec succès."));
         } else {
-            $this->Flash->error(__('The school could not be deleted. Please, try again.'));
+            $this->Flash->error(__("L'école n'a pas pu être supprimée. Veuillez réessayer s'il vous plaît."));
         }
 
         return $this->redirect(['action' => 'index']);

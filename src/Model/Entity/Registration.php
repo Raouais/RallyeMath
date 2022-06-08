@@ -30,6 +30,8 @@ class Registration extends Entity
         'isConfirm' => true,
         'isFinalist' => true,
         'editionId' => true,
+        'userId' => true,
+        'schoolId' => true,
         'created' => true,
         'modified' => true,
     ];

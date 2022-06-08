@@ -4,10 +4,12 @@
  * @var \App\Model\Entity\Registration $registration
  */
 
- $options = [
-     7 => " Jean",
-     13 => " Louis"
- ]
+$options = [];
+
+foreach($students as $s){
+    $options[$s->id] = "  ".$s->lastname." ".$s->firstname; 
+}
+
 ?>
 <div class="row">
     <aside class="column">
@@ -20,14 +22,9 @@
         <div class="registrations form content">
             <?= $this->Form->create($registration) ?>
             <fieldset>
-                <legend><?= __('Add Registration') ?></legend>
+                <legend><?= __("Inscription à l'édition ".$editionName) ?></legend>
                 <?php
-                    echo $this->Form->control('isConfirm');
-                    echo $this->Form->control('isFinalist');
-
-                    echo $this->Form->label("Ecole");
-                    echo $this->Form->select('schools', [1 => "HERS"]);
-                    echo $this->Form->label("Etudiants");
+                    echo '<label>Choisissez les élèves participants</label>';
                     echo $this->Form->select(
                         'students', 
                         $options,

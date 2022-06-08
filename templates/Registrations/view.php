@@ -16,8 +16,44 @@
     </aside>
     <div class="column-responsive column-80">
         <div class="registrations view content">
-            <h3><?= h($registration->id) ?></h3>
+            <h3><?= h("Inscription à l'édition ".$editionName) ?></h3>
             <table>
+                <tr>
+                    <th><?= __('Ecole') ?></th>
+                    <td><?= h($school->name); ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Edition') ?></th>
+                    <td><?= h($editionName) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Etudiants') ?></th>
+                    <td>
+                        <table>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                            </tr>
+                            <?php foreach($students as $s): ?>
+                                <tr>
+                                    <td>
+                                        <?= $s->lastname ?>
+                                    </td>
+                                    <td>
+                                        <?= $s->firstname ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach;?>
+                        </table>
+                        <?= $this->Html->link('Tout voir', ['controller' => 'students', 'action' => 'index', $registration->schoolId], ['class' => 'button']) ?>
+                        <br>
+                        <ul class="pagination">
+                            <?=$this->Paginator->prev("<<")?>
+                            <?=$this->Paginator->numbers()?>
+                            <?=$this->Paginator->next(">>")?>
+                        </ul>
+                    </td>
+                </tr>
                 <tr>
                     <th><?= __('Confirmée') ?></th>
                     <td><?= $registration->isConfirm ? __('Oui') : __('Non'); ?></td>
@@ -25,10 +61,6 @@
                 <tr>
                     <th><?= __('En finale') ?></th>
                     <td><?= $registration->isFinalist ? __('Oui') : __('Non'); ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Edition') ?></th>
-                    <td><?= h($editionName) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Créée') ?></th>
