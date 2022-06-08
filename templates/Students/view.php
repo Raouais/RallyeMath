@@ -16,7 +16,7 @@
     </aside>
     <div class="column-responsive column-80">
         <div class="students view content">
-            <h3><?= h($student->id) ?></h3>
+            <h3><?= h("Eleve de l'école ".$schoolName) ?></h3>
             <table>
                 <tr>
                     <th><?= __('Nom') ?></th>
@@ -28,7 +28,7 @@
                 </tr>
                 <tr>
                     <th><?= __('Ecole') ?></th>
-                    <td><?= $this->Number->format($student->schoolId) ?></td>
+                    <td><?= h($schoolName) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Created') ?></th>

@@ -22,6 +22,10 @@ class StudentsController extends AppController
     public function index($schoolID = null)
     {
         $this->Authorization->skipAuthorization();
+        if($schoolID == null){
+            $schoolID = $this->getSchool()->id;
+        }
+
         $students = $this->paginate($this->Students->findBySchoolid($schoolID));
         $this->set(compact('students'));
         $this->set(compact('schoolID'));
@@ -40,6 +44,8 @@ class StudentsController extends AppController
             'contain' => [],
         ]);
         $this->authorize($student);
+        $schoolName = $this->getSchool()->name;
+        $this->set(compact('schoolName'));
         $this->set(compact('student'));
         $this->set(compact('schoolID'));
     }
@@ -113,6 +119,14 @@ class StudentsController extends AppController
         }
 
         return $this->redirect(['action' => 'index', $schoolID]);
+    }
+
+    private function getUser(){
+        return $this->Authentication->getResult()->getData();
+    }
+
+    private function getSchool(){
+        return ($this->getTableLocator()->get('Schools'))->findByUserid($this->getUser()->id)->firstOrFail();
     }
 
     private function authorize(Student $student){

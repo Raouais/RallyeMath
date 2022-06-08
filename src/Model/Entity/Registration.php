@@ -9,9 +9,12 @@ use Cake\ORM\Entity;
  * Registration Entity
  *
  * @property int $id
- * @property bool $isConfirm
- * @property bool $isFinalist
+ * @property string $team
+ * @property bool|null $isConfirm
+ * @property bool|null $isFinalist
  * @property int $editionId
+ * @property int $userId
+ * @property int $schoolId
  * @property \Cake\I18n\FrozenTime|null $created
  * @property \Cake\I18n\FrozenTime|null $modified
  */
@@ -27,6 +30,7 @@ class Registration extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
+        'team' => true,
         'isConfirm' => true,
         'isFinalist' => true,
         'editionId' => true,

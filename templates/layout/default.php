@@ -73,6 +73,9 @@ $cakeDescription = 'RALLYE MATHÉMATIQUE';
                         <li class="nav-item">
                             <?= $this->Html->link(__('Mon école'), ['controller' => 'schools', 'action' => 'index'], ['class' => 'nav-link']) ?>
                         </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(__('Mes élèves'), ['controller' => 'students', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                        </li>
                     <?php endif ?>
                     <?php if (!$isConnected) : ?>
                         <li class="nav-item">

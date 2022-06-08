@@ -62,6 +62,6 @@ class EditionPolicy
      */
     public function canView(IdentityInterface $user, Edition $edition)
     {
-        return $user->isAdmin === 1;
+        return true;
     }
 }

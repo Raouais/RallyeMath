@@ -20,11 +20,14 @@ class RegistrationsFixture extends TestFixture
         $this->records = [
             [
                 'id' => 1,
+                'team' => 'Lorem ipsum dolor sit amet',
                 'isConfirm' => 1,
                 'isFinalist' => 1,
                 'editionId' => 1,
-                'created' => '2022-06-06 13:04:44',
-                'modified' => '2022-06-06 13:04:44',
+                'userId' => 1,
+                'schoolId' => 1,
+                'created' => '2022-06-08 20:33:29',
+                'modified' => '2022-06-08 20:33:29',
             ],
         ];
         parent::init();

@@ -5,7 +5,7 @@
  */
 ?>
 <div class="registrations index content">
-    <?php if(!sizeof($registrations) > 0):?>
+    <?php if(!$isAdmin):?>
         <?= $this->Html->link(__("Créer l'inscription"), ['action' => 'add', $editionID], ['class' => 'button float-right']) ?>
     <?php endif?>
     <h3><?= __('Inscription') ?></h3>
@@ -13,6 +13,7 @@
         <table>
             <thead>
                 <tr>
+                    <th><?= $this->Paginator->sort('Equipe') ?></th>
                     <th><?= $this->Paginator->sort('Confirmée') ?></th>
                     <th><?= $this->Paginator->sort('En finale') ?></th>
                     <th><?= $this->Paginator->sort('Edition') ?></th>
@@ -22,6 +23,7 @@
             <tbody>
                 <?php foreach ($registrations as $registration): ?>
                 <tr>
+                    <td><?= h($registration->team) ?></td>
                     <td><?= h($registration->isConfirm ? "Oui" : "Non") ?></td>
                     <td><?= h($registration->isFinalist ? "Oui" : "Non") ?></td>
                     <td><?= h($editionName) ?></td>

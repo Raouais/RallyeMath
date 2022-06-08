@@ -33,6 +33,7 @@ foreach($students as $s){
                         echo $this->Form->control('isConfirm', ['label' => 'Conrfimée']);
                         echo $this->Form->control('isFinalist', ['label' => 'En finale']);
                     } else {
+                        echo $this->Form->control('team',['label' => "Nom de l'équipe"]);
                         echo '<label>Choisissez les élèves participants</label>';
                         echo $this->Form->select(
                             'students', 

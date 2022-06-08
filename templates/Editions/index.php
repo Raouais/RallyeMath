@@ -33,10 +33,10 @@
                         <?php if(!$isAdmin):?>                        
                             <?= $this->Html->link(__("S'inscrire"), ['controller' => 'registrations', 'action' => 'index', $edition->id]) ?>
                         <?php else:?>                        
-                            <?= $this->Html->link(__('Voir'), ['action' => 'view', $edition->id]) ?>
                             <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $edition->id]) ?>
                             <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $edition->id], ['confirm' => __('Are you sure you want to delete # {0}?', $edition->id)]) ?>
                         <?php endif?>
+                        <?= $this->Html->link(__('Voir'), ['action' => 'view', $edition->id]) ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

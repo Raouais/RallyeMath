@@ -19,6 +19,10 @@
             <h3><?= h("Inscription à l'édition ".$editionName) ?></h3>
             <table>
                 <tr>
+                    <th><?= __('Equipe') ?></th>
+                    <td><?= h($registration->team); ?></td>
+                </tr>
+                <tr>
                     <th><?= __('Ecole') ?></th>
                     <td><?= h($school->name); ?></td>
                 </tr>

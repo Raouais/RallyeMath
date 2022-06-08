@@ -55,6 +55,11 @@ class RegistrationsTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
+            ->scalar('team')
+            ->maxLength('team', 80)
+            ->requirePresence('team', 'create')
+            ->notEmptyString('team');
+        $validator
             ->boolean('isConfirm');
 
         $validator

@@ -47,15 +47,17 @@ class EditionsController extends AppController
         $deadline = $this->getTableLocator()->get('Deadlines');
         $deadlines = $deadline->find()->
                 select(['title','startdate','enddate'])->
-                where(['deadlines.editionId'=> $id]);
+                where(['Deadlines.editionId'=> $id]);
         $deadlines = $this->paginate($deadlines, ['limit' => '1']);
 
         $image = $this->getTableLocator()->get('Files');
         $images = $image->find()->
                 select(['name'])->
-                where(['files.editionId'=> $id]);
+                where(['Files.editionId'=> $id]);
         $images = $this->paginate($images, ['limit' => '1']);
 
+        $isAdmin = $this->Authentication->getResult()->getData()->isAdmin == 1;
+        $this->set(compact('isAdmin'));
         $this->set(compact('edition'));
         $this->set(compact('deadlines'));
         $this->set(compact('images'));

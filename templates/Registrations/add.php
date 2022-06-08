@@ -24,6 +24,7 @@ foreach($students as $s){
             <fieldset>
                 <legend><?= __("Inscription à l'édition ".$editionName) ?></legend>
                 <?php
+                    echo $this->Form->control('team',['label' => "Nom de l'équipe"]);
                     echo '<label>Choisissez les élèves participants</label>';
                     echo $this->Form->select(
                         'students', 
