@@ -16,6 +16,7 @@
  */
 
 $isConnected = isset($_SESSION['Auth']);
+if($isConnected) $isAdmin = $_SESSION['Auth']->isAdmin === 1;
 $cakeDescription = 'RALLYE MATHÉMATIQUE';
 ?>
 <!DOCTYPE html>
@@ -65,6 +66,11 @@ $cakeDescription = 'RALLYE MATHÉMATIQUE';
                     <?php if ($isConnected) : ?>
                         <li class="nav-item">
                             <?= $this->Html->link(__('S\'inscrire'), ['controller' => 'editions', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                        </li>
+                    <?php endif ?>
+                    <?php if (!$isAdmin): ?>
+                        <li class="nav-item">
+                            <?= $this->Html->link(__('Mon école'), ['controller' => 'schools', 'action' => 'index'], ['class' => 'nav-link']) ?>
                         </li>
                     <?php endif ?>
                     <?php if (!$isConnected) : ?>

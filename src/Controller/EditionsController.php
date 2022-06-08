@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\Edition;
 use Authorization\Exception\ForbiddenException;
 
 /**
@@ -41,12 +42,7 @@ class EditionsController extends AppController
             'contain' => [],
         ]);
 
-        try{
-            $this->Authorization->authorize($edition);
-        } catch(ForbiddenException $e){
-            $this->Flash->error("Vous n'avez pas l'autorisation.");
-            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
-        }
+        $this->authorire($edition);
 
         $deadline = $this->getTableLocator()->get('Deadlines');
         $deadlines = $deadline->find()->
@@ -74,13 +70,7 @@ class EditionsController extends AppController
     {
         $edition = $this->Editions->newEmptyEntity();
 
-        try{
-            $this->Authorization->authorize($edition);
-        } catch(ForbiddenException $e){
-            $this->Flash->error("Vous n'avez pas l'autorisation.");
-            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
-        }
-
+        $this->authorire($edition);
         if ($this->request->is('post')) {
             $edition = $this->Editions->patchEntity($edition, $this->request->getData());
             if ($this->Editions->save($edition)) {
@@ -106,13 +96,7 @@ class EditionsController extends AppController
             'contain' => [],
         ]);
        
-        try{
-            $this->Authorization->authorize($edition);
-        } catch(ForbiddenException $e){
-            $this->Flash->error("Vous n'avez pas l'autorisation.");
-            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
-        }
-        
+        $this->authorire($edition);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $edition = $this->Editions->patchEntity($edition, $this->request->getData());
             if ($this->Editions->save($edition)) {
@@ -137,13 +121,8 @@ class EditionsController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $edition = $this->Editions->get($id);
 
-        try{
-            $this->Authorization->authorize($edition);
-        } catch(ForbiddenException $e){
-            $this->Flash->error("Vous n'avez pas l'autorisation.");
-            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
-        }
-        
+        $this->authorire($edition);
+
         if ($this->Editions->delete($edition)) {
             $this->Flash->success(__('The edition has been deleted.'));
         } else {
@@ -151,6 +130,15 @@ class EditionsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    private function authorire(Edition $edition){
+        try{
+            $this->Authorization->authorize($edition);
+        } catch(ForbiddenException $e){
+            $this->Flash->error("Vous n'avez pas l'autorisation.");
+            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+        }
     }
 
 }

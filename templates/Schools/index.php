@@ -5,7 +5,9 @@
  */
 ?>
 <div class="schools index content">
+    <?php if(sizeof($schools) == 0):?>
     <?= $this->Html->link(__('Ajouter'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <?php endif?>
     <h3><?= __('Ecole') ?></h3>
     <div class="table-responsive">
         <table>

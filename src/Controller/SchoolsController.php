@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\School;
+use Authorization\Exception\ForbiddenException;
+
 /**
  * Schools Controller
  *
@@ -18,8 +21,8 @@ class SchoolsController extends AppController
      */
     public function index()
     {
-        $schools = $this->paginate($this->Schools);
-
+        $this->Authorization->skipAuthorization();
+        $schools = $this->paginate($this->Schools->findByUserid($this->Authentication->getResult()->getData()->id));
         $this->set(compact('schools'));
     }
 
@@ -35,7 +38,7 @@ class SchoolsController extends AppController
         $school = $this->Schools->get($id, [
             'contain' => [],
         ]);
-
+        $this->authorize($school);
         $this->set(compact('school'));
     }
 
@@ -47,6 +50,7 @@ class SchoolsController extends AppController
     public function add()
     {
         $school = $this->Schools->newEmptyEntity();
+        $this->authorize($school);
         if ($this->request->is('post')) {
             $school = $this->Schools->patchEntity($school, $this->request->getData());
             if ($this->Schools->save($school)) {
@@ -71,6 +75,7 @@ class SchoolsController extends AppController
         $school = $this->Schools->get($id, [
             'contain' => [],
         ]);
+        $this->authorize($school);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $school = $this->Schools->patchEntity($school, $this->request->getData());
             if ($this->Schools->save($school)) {
@@ -94,6 +99,7 @@ class SchoolsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $school = $this->Schools->get($id);
+        $this->authorize($school);
         if ($this->Schools->delete($school)) {
             $this->Flash->success(__('The school has been deleted.'));
         } else {
@@ -101,5 +107,14 @@ class SchoolsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    private function authorize(School $s){
+        try{
+            $this->Authorization->authorize($s);
+        } catch(ForbiddenException $e){
+            $this->Flash->error("Vous n'avez pas l'autorisation.");
+            return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+        }
     }
 }
