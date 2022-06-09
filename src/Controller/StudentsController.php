@@ -23,16 +23,27 @@ class StudentsController extends AppController
     public function index($schoolID = null)
     {
         $this->Authorization->skipAuthorization();
+        $isAdmin = $this->getUser()->isAdmin;
+        
+        $table = $this->getTableLocator()->get('Schools');
+        $schools = $table->find('all');
+        
         if($schoolID == null){
             try{
                 $schoolID = $this->getSchool()->id;
+                $students = $this->paginate($this->Students->findBySchoolid($schoolID));
             }catch(RecordNotFoundException $e){
-                $this->Flash->error(__("Vous devez créer une école avant de créer des élèves."));
-                return $this->redirect(['controller' => 'pages', 'action' => 'home']);
+                if($isAdmin){
+                    $students = $this->paginate($this->Students);
+                } else {
+                    $this->Flash->error(__("Vous devez créer une école avant de créer des élèves."));
+                    return $this->redirect(['controller' => 'pages', 'action' => 'home']);
+                }
             }
         }
 
-        $students = $this->paginate($this->Students->findBySchoolid($schoolID));
+        $this->set(compact('schools'));
+        $this->set(compact('isAdmin'));
         $this->set(compact('students'));
         $this->set(compact('schoolID'));
     }
@@ -50,10 +61,19 @@ class StudentsController extends AppController
             'contain' => [],
         ]);
         if(!$this->authorize($student)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
-        $schoolName = $this->getSchool()->name;
+        
+        try{
+            $schoolName = $this->getSchool()->name;
+        } catch(RecordNotFoundException $e){
+            $schoolName = ($this->getTableLocator()->get('Schools'))->findById($student->schoolId)->firstOrFail()->name;
+        }
+
+        $schoolID = $student->schoolId;
+        $isAdmin = $this->getUser()->isAdmin;
+        $this->set(compact('isAdmin'));
         $this->set(compact('schoolName'));
-        $this->set(compact('student'));
         $this->set(compact('schoolID'));
+        $this->set(compact('student'));
     }
 
     /**

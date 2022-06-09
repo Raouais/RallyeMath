@@ -24,7 +24,9 @@ class EditionsController extends AppController
         $this->Authorization->skipAuthorization();
         $editions = $this->paginate($this->Editions);
         $isAdmin = $this->Authentication->getResult()->getData()->isAdmin == 1;
-        // $this->Authorization->authorize($editions,'index');
+        $dlTable = $this->getTableLocator()->get('Deadlines');
+        $deadlines = $dlTable->find('all');
+        $this->set(compact('deadlines'));
         $this->set(compact('editions'));
         $this->set(compact('isAdmin'));
     }
