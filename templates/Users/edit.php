@@ -29,10 +29,14 @@ $options = [
                     echo $this->Form->control('lastname',['label' => 'Nom']);
                     echo $this->Form->control('firstname',['label' => 'Prénom']);
                     echo $this->Form->control('email',['label' => 'Email']);
-                    echo $this->Form->control('password',['label' => 'Mot de passe']);
+                    echo $this->Form->control('password',['default' => "123456", 'label' => 'Mot de passe']);
                     echo $this->Form->control('password_confirm',['label' => 'Confirmation du mot de passe', 'type' => 'password']);
                     echo $this->Form->control('function',['label' => 'Fonction ex: (professeur, éducateur)']);
                     echo $this->Form->control('phone',['label' => 'Téléphone']);
+                    if($isAdmin){
+                        echo $this->Form->label('Administrateur');
+                        echo $this->Form->select('isAdmin',[1 => 'Oui', 0 => 'Non']);
+                    }
                     echo $this->Form->label("Civilité");
                     echo $this->Form->select('civility', $options);
                 ?>

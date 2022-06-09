@@ -20,7 +20,7 @@ class SchoolPolicy
      */
     public function canAdd(IdentityInterface $user, School $school)
     {
-        return !(new SchoolsTable())->exists(['Schools.userId' => $user->id]);
+        return !(new SchoolsTable())->exists(['Schools.userId' => $user->id]) || $user->isAdmin;
     }
 
     /**
@@ -61,6 +61,6 @@ class SchoolPolicy
 
     protected function isAuthor(IdentityInterface $user, School $school)
     {
-        return $school->userId === $user->id;
+        return $school->userId === $user->id || $user->isAdmin;
     }
 }

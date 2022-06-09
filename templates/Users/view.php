@@ -42,6 +42,12 @@
                     <th><?= __('Civilité') ?></th>
                     <td><?= h($user->civility == 1 ? "Mme.": "M.") ?></td>
                 </tr>
+                <?php if($isAdmin):?>
+                    <tr>
+                        <th><?= __('Aministrateur') ?></th>
+                        <td><?= h($user->isAdmin === 1 ? "Oui": "Non") ?></td>
+                    </tr>
+                <?php endif?>
                 <tr>
                     <th><?= __('Créé') ?></th>
                     <td><?= h($user->created) ?></td>

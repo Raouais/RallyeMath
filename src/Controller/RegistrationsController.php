@@ -15,6 +15,25 @@ use Cake\I18n\FrozenTime;
  */
 class RegistrationsController extends AppController
 {
+
+
+
+    public function all(){
+
+
+        $this->Authorization->skipAuthorization();
+        $editionsTable = $this->getTableLocator()->get('Editions');
+        $editions = $editionsTable->find('all');
+
+        if($this->getUser()->isAdmin){
+
+        } else {
+            $registrations = $this->paginate($this->Registrations->findByUserid($this->getUser()->id));
+        }        
+
+        $this->set(compact('editions'));
+        $this->set(compact('registrations'));
+    }
     /**
      * Index method
      *
@@ -23,19 +42,25 @@ class RegistrationsController extends AppController
     public function index($editionID = null)
     {
         $this->Authorization->skipAuthorization();
-        $edition = $this->getTableLocator()->get('Editions');
+        $isAdmin = $this->getUser()->isAdmin;
 
-        if($this->getUser()->isAdmin){
-            $registrations = $this->paginate($this->Registrations->findByEditionid($editionID));
-        } else {
-            $registrations = $this->paginate($this->Registrations->findByUserid($this->getUser()->id));
-        }
-        if($editionID == null){
+        $editionsTable = $this->getTableLocator()->get('Editions');
+
+        if($editionID == null && $isAdmin){
+            $editions = $editionsTable->find('all');
+            $this->set(compact('editions'));
+        } else if($editionID == null) {
+            $this->Flash->error(__("Erreur URL. Veuillez ne pas accéder aux pages depuis l'URL."));
             return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
         }
-        $editionName = $edition->findById($editionID)->firstOrFail()->title;
+        
+        if($this->getUser()->isAdmin){
+            $registrations = $this->paginate($this->Registrations);
+        } else {
+            $registrations = $this->paginate($this->Registrations->findByEditionid($editionID));
+            $editionName = $editionsTable->findById($editionID)->firstOrFail()->title;
+        }
 
-        $isAdmin = $this->getUser()->isAdmin;
         $this->set(compact('isAdmin'));
         $this->set(compact('registrations'));
         $this->set(compact('editionID'));
@@ -59,14 +84,12 @@ class RegistrationsController extends AppController
         $edition = $this->getTableLocator()->get('Editions');
         $editionName = $edition->findById($editionID)->firstOrFail()->title;
 
-        $schools = $this->getTableLocator()->get('Schools');
-        $school = $schools->findById($registration->schoolId)->firstOrFail();
-
         $students = $this->getTableLocator()->get('Students');
         $students = $this->paginate($students->find()->
                         select(['lastname','firstname','id'])->
-                        where(['Students.schoolId' => $school->id, 'Students.registrationId is not ' => null]));
+                        where(['Students.schoolId' => $this->getSchool()->id, 'Students.registrationId' => $registration->id]));
 
+        $school = $this->getSchool();
         $this->set(compact('editionID'));
         $this->set(compact('students'));
         $this->set(compact('school'));
@@ -82,6 +105,18 @@ class RegistrationsController extends AppController
     public function add($editionID = null)
     {
 
+        $isAdmin = $this->getUser()->isAdmin;
+
+        $editionsTable = $this->getTableLocator()->get('Editions');
+
+        if($editionID == null && $isAdmin){
+            $editions = $editionsTable->find('all');
+            $this->set(compact('editions'));
+        } else if($editionID == null) {
+            $this->Flash->error(__("Erreur URL. Veuillez ne pas accèder aux pages depuis l'URL."));
+            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+        }
+        
         $this->editionDealinesAuthorize($editionID);
 
         $edition = $this->getTableLocator()->get('Editions');
@@ -115,10 +150,10 @@ class RegistrationsController extends AppController
                 if(!$this->getUser()->isAdmin){
                     $this->updateStudent($this->request->getData('students'),$registration->id);
                 }
-                $this->Flash->success(__('The registration has been saved.'));
+                $this->Flash->success(__("L'inscription a été ajoutée avec succès."));
                 return $this->redirect(['action' => 'index', $editionID]);
             }
-            $this->Flash->error(__('The registration could not be saved. Please, try again.'));
+            $this->Flash->error(__("L'inscription n'a pas pu être ajoutée."));
         }
         $this->set(compact('editionID'));
         $this->set(compact('students'));
@@ -185,15 +220,15 @@ class RegistrationsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $registration = $this->Registrations->patchEntity($registration, $this->request->getData());
             $registration->userId = $this->getUser()->id;
-            if ($this->isEditionConditionOk($this->request->getData('students'),$editionID) && $this->Registrations->save($registration)) {
+            if($this->isEditionConditionOk($this->request->getData('students'),$editionID) && $this->Registrations->save($registration)) {
                 if(!$this->getUser()->isAdmin){
                     $this->updateStudent($this->request->getData('students'),$registration->id);
                 }
-                $this->Flash->success(__('The registration has been saved.'));
+                $this->Flash->success(__("L'inscription a été modifiée avec succès."));
 
                 return $this->redirect(['action' => 'index', $editionID]);
             }
-            $this->Flash->error(__('The registration could not be saved. Please, try again.'));
+            $this->Flash->error(__("L'inscription n'a pas pu être modifiée."));
         }
         
         $isAdmin = $this->getUser()->isAdmin;
@@ -206,30 +241,43 @@ class RegistrationsController extends AppController
 
     private function isEditionConditionOk($studentsIdSelected, $editionID){
         $table = $this->getTableLocator()->get('Editions');
-        $edition = $this->paginate($table->findById($editionID));
-        if(sizeof($studentsIdSelected) >= $edition->nbStudentMin && sizeof($studentsIdSelected) <= $edition->nbStudentMax){
-            return true;
-        } else {
-            $this->Flash->error(__("L'édition ".$edition->title." autorise ". $edition->nbStudentMin." à ".$$edition->nbStudentMax." participants"));
-            return false;
-        }
+        $edition = $table->findById($editionID)->firstOrFail();
+        if(!empty($studentsIdSelected)){
+            if(sizeof($studentsIdSelected) >= $edition->nbStudentMin && sizeof($studentsIdSelected) <= $edition->nbStudentMax){
+                return true;
+            } else {
+                $this->Flash->error(__("L'édition ".$edition->title." requiert au minimum ". $edition->nbStudentMin." participants."));
+                return false;
+            }
+        } 
+        $this->Flash->error(__("Vous devez choisir au minimum ". $edition->nbStudentMin. " élèves."));
+        return false;
+        
     }
 
     private function updateStudent($studentsIdSelected, $registrationId){
 
-        $schools = $this->getTableLocator()->get('Schools');
-        $school = $schools->findByUserid($this->getUser()->id)->firstOrFail();
-
         $table = $this->getTableLocator()->get('Students');
-        $students = $this->paginate($table->findBySchoolid($school->id));
+        $myStudents = $this->paginate($table->findBySchoolid($this->getSchool()->id));
 
-        foreach($students as $student){
-            foreach($studentsIdSelected as $idStudentSelected){
-                if($student->id == $idStudentSelected){
-                    $table->updateAll(['registrationId' => $registrationId], ['id' => $student->id]);
+        $IsSelected = false; 
+        foreach($myStudents as $student){
+            foreach($studentsIdSelected as $studentId){
+                if($student->id == $studentId){
+                    $IsSelected = true;
                 }
             }
+
+            if($IsSelected){
+                $table->updateAll(['registrationId' => $registrationId], ['id' => $student->id]);
+            } else {
+                if($student->registrationId == $registrationId){
+                    $table->updateAll(['registrationId' => null], ['id' => $student->id]);
+                }
+            }
+            $IsSelected = false;
         }
+
     }
     /**
      * Delete method
@@ -252,13 +300,21 @@ class RegistrationsController extends AppController
         return $this->redirect(['action' => 'index', $editionID]);
     }
 
-    private function authorize(Registration $r){
+    private function authorize(Registration $r, $page = null){
         try{
-            $this->Authorization->authorize($r);
+            if($page != null){
+                $this->Authorization->authorize($r, $page);
+            } else {
+                $this->Authorization->authorize($r);
+            }
         } catch(ForbiddenException $e){
             $this->Flash->error("Vous n'avez pas l'autorisation.");
             return $this->redirect(['controller' => 'Registrations', 'action' => 'index']);
         } 
+    }
+
+    private function getSchool(){
+        return (($this->getTableLocator()->get('Schools'))->findByUserid($this->getUser()->id))->firstOrFail();
     }
 
     private function getUser(){

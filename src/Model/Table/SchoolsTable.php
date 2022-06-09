@@ -44,6 +44,12 @@ class SchoolsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->hasMany('Students', [
+            'foreignKey' => 'schoolId',
+            'dependent' => true,
+            'cascadeCallbacks' => true
+        ]);
     }
 
     /**

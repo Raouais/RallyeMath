@@ -3,9 +3,12 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\User[]|\Cake\Collection\CollectionInterface $users
  */
+
 ?>
 <div class="users index content">
-    <?= $this->Html->link(__('Ajouter'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <?php if($isAdmin):?>
+        <?= $this->Html->link(__('Ajouter'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <?php endif?>
     <h3><?= __('Users') ?></h3>
     <div class="table-responsive">
         <table>

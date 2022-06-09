@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\User;
+use Authorization\Exception\ForbiddenException;
 use Cake\Auth\DefaultPasswordHasher;
 use Cake\Event\EventInterface;
 
@@ -21,8 +23,15 @@ class UsersController extends AppController
      */
     public function index()
     {
-        $users = $this->paginate($this->Users);
+        $this->Authorization->skipAuthorization();
+        if($this->getUser()->isAdmin){
+            $users = $this->paginate($this->Users);
+        } else {
+            $users = $this->paginate($this->Users->findById($this->getUser()->id));
+        }
+        $isAdmin = $this->getUser()->isAdmin;
 
+        $this->set(compact('isAdmin'));
         $this->set(compact('users'));
     }
 
@@ -38,7 +47,9 @@ class UsersController extends AppController
         $user = $this->Users->get($id, [
             'contain' => [],
         ]);
-
+        $this->authorize($user);
+        $isAdmin = $this->getUser()->isAdmin;
+        $this->set(compact('isAdmin'));
         $this->set(compact('user'));
     }
 
@@ -49,12 +60,23 @@ class UsersController extends AppController
      */
     public function add()
     {
-        
-        $this->Authorization->skipAuthorization();
         $user = $this->Users->newEmptyEntity();
+
+        if(!$this->Authentication->getResult()->isValid()){
+            $this->Authorization->skipAuthorization();
+        } else {
+            $this->authorize($user);
+            $isAdmin = $this->getUser()->isAdmin;
+            $this->set(compact('isAdmin'));
+        }
+
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
-            $user->isAdmin = 0; // Les admins ne sont pas inscrit mais encodés
+
+            if(!$this->Authentication->getResult()->isValid()){
+                $user->isAdmin = 0;
+            }
+            
             if($this->request->getData('password_confirm') !== $this->request->getData('password')){
                 $this->Flash->error(__('Les mots de passes doivent être identiques.'));
             } else if ($this->Users->save($user)) {
@@ -66,6 +88,7 @@ class UsersController extends AppController
             }
             $this->Flash->error(__("L'utilisateur n'a pas pu être ajouté. Veuillez réessayer s'il vous plaît."));
         }
+
         $this->set(compact('user'));
     }
 
@@ -81,15 +104,19 @@ class UsersController extends AppController
         $user = $this->Users->get($id, [
             'contain' => [],
         ]);
+        $this->authorize($user);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
-            if ($this->Users->save($user)) {
+            if($this->request->getData('password_confirm') !== $this->request->getData('password')){
+                $this->Flash->error(__('Les mots de passes doivent être identiques.'));
+            } else if ($this->Users->save($user)) {
                 $this->Flash->success(__("L'utilisateur a été ajouté avec succès"));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__("'L'utilisateur n'a pas pu être modifié. Veuillez réessayer s'il vous plaît.'"));
         }
+        $isAdmin = $this->getUser()->isAdmin;
+        $this->set(compact('isAdmin'));
         $this->set(compact('user'));
     }
 
@@ -104,10 +131,19 @@ class UsersController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);
-        if ($this->Users->delete($user)) {
-            $this->Flash->success(__('The user has been deleted.'));
+        $this->authorize($user);
+        
+        if($user->isAdmin && $user->id == $this->getUser()->id){
+            $this->Flash->error(__("Vous ne pouvez pas suppimer votre propre compte administrateur."));
         } else {
-            $this->Flash->error(__("L'utilisateur n'a pas pu être modifié"));
+            if($this->Users->delete($user)) {
+                if($this->getUser()->id == $user->id){
+                    $this->logout();
+                }
+                $this->Flash->success(__("L'utilisateur a été supprimé avec succès."));
+            } else {
+                $this->Flash->error(__("L'utilisateur n'a pas pu être supprimé"));
+            }
         }
 
         return $this->redirect(['action' => 'index']);
@@ -159,4 +195,18 @@ class UsersController extends AppController
         }
         return $this->redirect(['controller' => 'Users', 'action' => 'login']);
     }
+
+    private function getUser(){
+        return $this->Authentication->getResult()->getData();
+    }
+
+    private function authorize(User $user){
+        try{
+            $this->Authorization->authorize($user);
+        } catch(ForbiddenException $e){
+            $this->Flash->error("Vous n'avez pas l'autorisation.");
+            return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+        }
+    }
+
 }

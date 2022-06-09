@@ -4,10 +4,6 @@
  * @var \App\Model\Entity\User $user
  */
 
- $options = [
-    1 => "Mme.",
-    2 => "M."
- ]
 ?>
 <div class="row">
     <aside class="column">
@@ -30,8 +26,12 @@
                     echo $this->Form->control('password_confirm',['label' => 'Confirmation du mot de passe', 'type' => 'password']);
                     echo $this->Form->control('function',['label' => 'Fonction ex: (professeur, éducateur)']);
                     echo $this->Form->control('phone',['label' => 'Téléphone']);
+                    if($isAdmin){
+                        echo $this->Form->label('Administrateur');
+                        echo $this->Form->select('isAdmin',[1 => 'Oui', 0 => 'Non']);
+                    }
                     echo $this->Form->label("Civilité");
-                    echo $this->Form->select('civility', $options);
+                    echo $this->Form->select('civility',[ 1 => "Mme.", 2 => "M."]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

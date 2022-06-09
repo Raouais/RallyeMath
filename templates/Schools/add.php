@@ -21,7 +21,6 @@
                     echo $this->Form->control('address', ['label' => 'Adresse']);
                     echo $this->Form->control('city', ['label' => 'Ville']);
                     echo $this->Form->control('phone', ['label' => 'Téléphone']);
-                    echo $this->Form->control('userId');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Model\Entity\Student;
 use Authorization\Exception\ForbiddenException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 
 /**
  * Students Controller
@@ -23,7 +24,12 @@ class StudentsController extends AppController
     {
         $this->Authorization->skipAuthorization();
         if($schoolID == null){
-            $schoolID = $this->getSchool()->id;
+            try{
+                $schoolID = $this->getSchool()->id;
+            }catch(RecordNotFoundException $e){
+                $this->Flash->error(__("Vous devez créer une école avant de créer des élèves."));
+                return $this->redirect(['controller' => 'pages', 'action' => 'home']);
+            }
         }
 
         $students = $this->paginate($this->Students->findBySchoolid($schoolID));
@@ -64,7 +70,6 @@ class StudentsController extends AppController
             $student->schoolId = $schoolID;
             if ($this->Students->save($student)) {
                 $this->Flash->success(__("L'étudiant a été ajouté avec succès."));
-
                 return $this->redirect(['action' => 'index', $schoolID]);
             }
             $this->Flash->error(__("L'étudiant n'a pas pu être ajouté. Veuillez réessayer"));
@@ -121,12 +126,13 @@ class StudentsController extends AppController
         return $this->redirect(['action' => 'index', $schoolID]);
     }
 
+    
+    private function getSchool(){
+        return (($this->getTableLocator()->get('Schools'))->findByUserid($this->getUser()->id))->firstOrFail();
+    }
+    
     private function getUser(){
         return $this->Authentication->getResult()->getData();
-    }
-
-    private function getSchool(){
-        return ($this->getTableLocator()->get('Schools'))->findByUserid($this->getUser()->id)->firstOrFail();
     }
 
     private function authorize(Student $student){

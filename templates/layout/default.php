@@ -65,9 +65,21 @@ $cakeDescription = 'RALLYE MATHÉMATIQUE';
                         ) ?>
                     </li>
                     <?php if ($isConnected) : ?>
+                        <?php if ($isAdmin !== null && !$isAdmin): ?>
                         <li class="nav-item">
-                            <?= $this->Html->link(__('S\'inscrire'), ['controller' => 'editions', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                            <?= $this->Html->link(__('Mes Inscriptions'), ['controller' => 'registrations', 'action' => 'all'], ['class' => 'nav-link']) ?>
                         </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(__('Mon compte'), ['controller' => 'users', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                        </li>
+                        <?php elseif($isAdmin !== null && $isAdmin):?>
+                            <li class="nav-item">
+                                <?= $this->Html->link(__('Inscriptions'), ['controller' => 'registrations', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                            </li>
+                            <li class="nav-item">
+                                <?= $this->Html->link(__('Comptes'), ['controller' => 'users', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                            </li>
+                        <?php endif?>
                     <?php endif ?>
                     <?php if ($isAdmin !== null && !$isAdmin): ?>
                         <li class="nav-item">
@@ -76,6 +88,13 @@ $cakeDescription = 'RALLYE MATHÉMATIQUE';
                         <li class="nav-item">
                             <?= $this->Html->link(__('Mes élèves'), ['controller' => 'students', 'action' => 'index'], ['class' => 'nav-link']) ?>
                         </li>
+                    <?php elseif($isAdmin !== null && $isAdmin): ?>
+                            <li class="nav-item">
+                                <?= $this->Html->link(__('Ecoles'), ['controller' => 'schools', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                            </li>
+                            <li class="nav-item">
+                                <?= $this->Html->link(__('Elèves'), ['controller' => 'students', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                            </li>
                     <?php endif ?>
                     <?php if (!$isConnected) : ?>
                         <li class="nav-item">

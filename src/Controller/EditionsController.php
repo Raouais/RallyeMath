@@ -75,12 +75,14 @@ class EditionsController extends AppController
         $this->authorire($edition);
         if ($this->request->is('post')) {
             $edition = $this->Editions->patchEntity($edition, $this->request->getData());
-            if ($this->Editions->save($edition)) {
+            if($this->request->getData('nbMaxStudent') < $this->request->getData('nbMaxStudent')){
+                $this->Flash->error(__("Le nombre maximum d'étudiants ne peut pas être plus petit que le nombre minimum."));
+            } else if ($this->Editions->save($edition)) {
                 $this->Flash->success(__('The edition has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
+            } else {
+                $this->Flash->error(__('The edition could not be saved. Please, try again.'));
             }
-            $this->Flash->error(__('The edition could not be saved. Please, try again.'));
         }
         $this->set(compact('edition'));
     }
@@ -101,12 +103,14 @@ class EditionsController extends AppController
         $this->authorire($edition);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $edition = $this->Editions->patchEntity($edition, $this->request->getData());
-            if ($this->Editions->save($edition)) {
+            if($this->request->getData('nbMaxStudent') < $this->request->getData('nbMaxStudent')){
+                $this->Flash->error(__("Le nombre maximum d'étudiants ne peut pas être plus petit que le nombre minimum."));
+            } else if ($this->Editions->save($edition)) {
                 $this->Flash->success(__('The edition has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
+            } else {
+                $this->Flash->error(__('The edition could not be saved. Please, try again.'));
             }
-            $this->Flash->error(__('The edition could not be saved. Please, try again.'));
         }
         $this->set(compact('edition'));
     }
