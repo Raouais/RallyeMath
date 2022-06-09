@@ -42,7 +42,7 @@ class EditionsController extends AppController
             'contain' => [],
         ]);
 
-        $this->authorire($edition);
+        if(!$this->authorire($edition)) return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
 
         $deadline = $this->getTableLocator()->get('Deadlines');
         $deadlines = $deadline->find()->
@@ -54,9 +54,10 @@ class EditionsController extends AppController
         $images = $image->find()->
                 select(['name'])->
                 where(['Files.editionId'=> $id]);
-        $images = $this->paginate($images, ['limit' => '1']);
+        $images = $this->paginate($images);
 
         $isAdmin = $this->Authentication->getResult()->getData()->isAdmin == 1;
+
         $this->set(compact('isAdmin'));
         $this->set(compact('edition'));
         $this->set(compact('deadlines'));
@@ -72,7 +73,7 @@ class EditionsController extends AppController
     {
         $edition = $this->Editions->newEmptyEntity();
 
-        $this->authorire($edition);
+        if(!$this->authorire($edition)) return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
         if ($this->request->is('post')) {
             $edition = $this->Editions->patchEntity($edition, $this->request->getData());
             if($this->request->getData('nbMaxStudent') < $this->request->getData('nbMaxStudent')){
@@ -100,7 +101,7 @@ class EditionsController extends AppController
             'contain' => [],
         ]);
        
-        $this->authorire($edition);
+        if(!$this->authorire($edition)) return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $edition = $this->Editions->patchEntity($edition, $this->request->getData());
             if($this->request->getData('nbMaxStudent') < $this->request->getData('nbMaxStudent')){
@@ -127,7 +128,7 @@ class EditionsController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $edition = $this->Editions->get($id);
 
-        $this->authorire($edition);
+        if(!$this->authorire($edition)) return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
 
         if ($this->Editions->delete($edition)) {
             $this->Flash->success(__('The edition has been deleted.'));
@@ -141,9 +142,10 @@ class EditionsController extends AppController
     private function authorire(Edition $edition){
         try{
             $this->Authorization->authorize($edition);
+            return true;
         } catch(ForbiddenException $e){
             $this->Flash->error("Vous n'avez pas l'autorisation.");
-            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+            return false;
         }
     }
 

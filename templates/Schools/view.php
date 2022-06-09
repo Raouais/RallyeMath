@@ -8,9 +8,11 @@
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Ajouter'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $school->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $school->id], ['confirm' => __('Are you sure you want to delete # {0}?', $school->id), 'class' => 'side-nav-item']) ?>
+            <?php if(!$isAdmin):?>
+                <?= $this->Html->link(__('Ajouter'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+                <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $school->id], ['class' => 'side-nav-item']) ?>
+                <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $school->id], ['confirm' => __('Are you sure you want to delete # {0}?', $school->id), 'class' => 'side-nav-item']) ?>
+            <?php endif?>
             <?= $this->Html->link(__('Revenir à la liste'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>

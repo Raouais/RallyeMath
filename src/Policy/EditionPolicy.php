@@ -21,7 +21,7 @@ class EditionPolicy
      */
     public function canAdd(IdentityInterface $user, Edition $edition)
     {
-        return $user->isAdmin;
+        return $user->isAdmin == 1;
     }
 
     /**
@@ -33,7 +33,7 @@ class EditionPolicy
      */
     public function canEdit(IdentityInterface $user, Edition $edition)
     {
-        return $user->isAdmin;
+        return $user->isAdmin == 1;
     }
 
     /**
@@ -45,7 +45,7 @@ class EditionPolicy
      */
     public function canDelete(IdentityInterface $user, Edition $edition)
     {
-        return $user->isAdmin;
+        return $user->isAdmin == 1;
     }
 
     /**

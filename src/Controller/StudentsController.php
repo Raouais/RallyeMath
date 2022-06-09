@@ -49,7 +49,7 @@ class StudentsController extends AppController
         $student = $this->Students->get($id, [
             'contain' => [],
         ]);
-        $this->authorize($student);
+        if(!$this->authorize($student)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
         $schoolName = $this->getSchool()->name;
         $this->set(compact('schoolName'));
         $this->set(compact('student'));
@@ -64,7 +64,8 @@ class StudentsController extends AppController
     public function add($schoolID = null)
     {
         $student = $this->Students->newEmptyEntity();
-        $this->authorize($student);
+        if(!$this->authorize($student)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+
         if ($this->request->is('post')) {
             $student = $this->Students->patchEntity($student, $this->request->getData());
             $student->schoolId = $schoolID;
@@ -90,7 +91,8 @@ class StudentsController extends AppController
         $student = $this->Students->get($id, [
             'contain' => [],
         ]);
-        $this->authorize($student);
+        if(!$this->authorize($student)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $student = $this->Students->patchEntity($student, $this->request->getData());
             $student->schoolId = $schoolID;
@@ -114,9 +116,9 @@ class StudentsController extends AppController
      */
     public function delete($id = null, $schoolID = null)
     {
-        $this->request->allowMethod(['post', 'delete']);
         $student = $this->Students->get($id);
-        $this->authorize($student);
+        if(!$this->authorize($student)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+        $this->request->allowMethod(['post', 'delete']);
         if ($this->Students->delete($student)) {
             $this->Flash->success(__("L'étudiant à été supprimé."));
         } else {
@@ -138,9 +140,10 @@ class StudentsController extends AppController
     private function authorize(Student $student){
         try{
             $this->Authorization->authorize($student);
+            return true;
         } catch(ForbiddenException $e){
             $this->Flash->error("Vous n'avez pas l'autorisation.");
-            return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+            return false;
         }
     }
 }

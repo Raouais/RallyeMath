@@ -47,7 +47,7 @@ class UsersController extends AppController
         $user = $this->Users->get($id, [
             'contain' => [],
         ]);
-        $this->authorize($user);
+        if(!$this->authorize($user)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
         $isAdmin = $this->getUser()->isAdmin;
         $this->set(compact('isAdmin'));
         $this->set(compact('user'));
@@ -65,7 +65,7 @@ class UsersController extends AppController
         if(!$this->Authentication->getResult()->isValid()){
             $this->Authorization->skipAuthorization();
         } else {
-            $this->authorize($user);
+            if(!$this->authorize($user)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
             $isAdmin = $this->getUser()->isAdmin;
             $this->set(compact('isAdmin'));
         }
@@ -104,7 +104,7 @@ class UsersController extends AppController
         $user = $this->Users->get($id, [
             'contain' => [],
         ]);
-        $this->authorize($user);
+        if(!$this->authorize($user)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if($this->request->getData('password_confirm') !== $this->request->getData('password')){
@@ -131,7 +131,8 @@ class UsersController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);
-        $this->authorize($user);
+        
+        if(!$this->authorize($user)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
         
         if($user->isAdmin && $user->id == $this->getUser()->id){
             $this->Flash->error(__("Vous ne pouvez pas suppimer votre propre compte administrateur."));
@@ -203,9 +204,10 @@ class UsersController extends AppController
     private function authorize(User $user){
         try{
             $this->Authorization->authorize($user);
+            return true;
         } catch(ForbiddenException $e){
             $this->Flash->error("Vous n'avez pas l'autorisation.");
-            return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+            return false;
         }
     }
 

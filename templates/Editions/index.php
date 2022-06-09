@@ -15,9 +15,12 @@
                 <tr>
                     <th><?= $this->Paginator->sort('Titre') ?></th>
                     <th><?= $this->Paginator->sort('description') ?></th>
-                    <th><?= $this->Paginator->sort('Nb max étudiants') ?></th>
-                    <th><?= $this->Paginator->sort('Nb min étudiants') ?></th>
+                    <th><?= $this->Paginator->sort("Nombre d'élèves") ?></th>
                     <th><?= $this->Paginator->sort('Année scolaire') ?></th>
+                    <?php if($isAdmin):?>
+                        <th><?= $this->Paginator->sort("Echéances") ?></th>
+                        <th><?= $this->Paginator->sort("Photos") ?></th>
+                    <?php endif?>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
@@ -25,10 +28,21 @@
                 <?php foreach ($editions as $edition): ?>
                 <tr>
                     <td><?= h($edition->title) ?></td>
-                    <td><?= h($edition->description) ?></td>
-                    <td><?= $this->Number->format($edition->nbStudentMax) ?></td>
-                    <td><?= $this->Number->format($edition->nbStudentMin) ?></td>
+
+                    <?php if(strlen($edition->description) >= 10):?>
+                        <td><?= h(substr($edition->description,0,10))."..." ?></td>
+                    <?php else:?>
+                        <td><?= h($edition->description)?></td>
+                    <?php endif?>
+                    
+                    <td><?= "De ". $this->Number->format($edition->nbStudentMin) ." à ".$this->Number->format($edition->nbStudentMax) ?></td>
                     <td><?= h($edition->schoolYear) ?></td>
+
+                    <?php if($isAdmin):?>                        
+                        <td class="actions"><?= $this->Html->link(__('Créer'), ['action' => 'view', $edition->id]) ?></td>
+                        <td class="actions"><?= $this->Html->link(__('Ajouter'), ['action' => 'view', $edition->id]) ?></td>
+                    <?php endif?>
+                    
                     <td class="actions">
                         <?= $this->Html->link(__('Voir'), ['action' => 'view', $edition->id]) ?>
                         <?php if(!$isAdmin):?>                        

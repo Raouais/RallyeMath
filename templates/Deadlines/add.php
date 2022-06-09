@@ -20,7 +20,8 @@
                     echo $this->Form->control('title', ['label' => "Titre"]);
                     echo $this->Form->control('startdate', ['label' => "Début"]);
                     echo $this->Form->control('enddate', ['label' => "Fin"]);
-                    echo $this->Form->control('isLimit', ['label' => "Dernière échéance"]);
+                    echo $this->Form->label('Dernière échéance');
+                    echo $this->Form->select('isLimit',[1 => 'Oui', 0 => 'Non']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

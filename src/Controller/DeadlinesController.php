@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\Deadline;
+use Authorization\Exception\ForbiddenException;
+
 /**
  * Deadlines Controller
  *
@@ -18,6 +21,8 @@ class DeadlinesController extends AppController
      */
     public function index($editionID = null)
     {
+
+        $this->Authorization->skipAuthorization();
         if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
 
         $deadlines = $this->paginate($this->Deadlines->findByEditionid($editionID),  ['limit' => '3']);
@@ -40,7 +45,7 @@ class DeadlinesController extends AppController
         $deadline = $this->Deadlines->get($id, [
             'contain' => [],
         ]);
-
+        if(!$this->authorire($deadline)) return $this->redirect(['action' => 'index']);
         $this->set(compact('deadline'));
         $this->set(compact('editionID'));
     }
@@ -55,6 +60,7 @@ class DeadlinesController extends AppController
         if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
 
         $deadline = $this->Deadlines->newEmptyEntity();
+        if(!$this->authorire($deadline)) return $this->redirect(['action' => 'index']);
         if ($this->request->is('post')) {
             $deadline = $this->Deadlines->patchEntity($deadline, $this->request->getData());
             $deadline->editionId = $editionID;
@@ -83,6 +89,7 @@ class DeadlinesController extends AppController
         $deadline = $this->Deadlines->get($id, [
             'contain' => [],
         ]);
+        if(!$this->authorire($deadline)) return $this->redirect(['action' => 'index']);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $deadline = $this->Deadlines->patchEntity($deadline, $this->request->getData());
             $deadline->editionId = $editionID;
@@ -110,6 +117,7 @@ class DeadlinesController extends AppController
 
         $this->request->allowMethod(['post', 'delete']);
         $deadline = $this->Deadlines->get($id);
+        if(!$this->authorire($deadline)) return $this->redirect(['action' => 'index']);
         if ($this->Deadlines->delete($deadline)) {
             $this->Flash->success(__('The deadline has been deleted.'));
         } else {
@@ -119,4 +127,13 @@ class DeadlinesController extends AppController
         return $this->redirect(['action' => 'index', $editionID]);
     }
 
+    private function authorire(Deadline $d){
+        try{
+            $this->Authorization->authorize($d);
+            return true;
+        } catch(ForbiddenException $e){
+            $this->Flash->error("Vous n'avez pas l'autorisation.");
+            return false;
+        }
+    }
 }

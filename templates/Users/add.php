@@ -3,14 +3,20 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\User $user
  */
-
+$is = true;
+if(!isset($isAdmin)){
+    $isAdmin = false;
+    $is = false;
+}
 ?>
 <div class="row">
     <aside class="column">
         <div class="side-nav">
             
             <h4 class="heading"><?= __('Actions') ?></h4>
+            <?php if($is):?>
             <?= $this->Html->link(__('Revenir à la liste'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?php endif?>
         </div>
     </aside>
     <div class="column-responsive column-80">

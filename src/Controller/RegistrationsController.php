@@ -82,7 +82,7 @@ class RegistrationsController extends AppController
         $registration = $this->Registrations->get($id, [
             'contain' => [],
         ]);
-        $this->authorize($registration);
+        if(!$this->authorize($registration)) return $this->redirect(['controller' => 'Registrations', 'action' => 'all']);
 
         $edition = $this->getTableLocator()->get('Editions');
         $editionName = $edition->findById($registration->editionId)->firstOrFail()->title;
@@ -108,9 +108,7 @@ class RegistrationsController extends AppController
     public function add($editionID = null)
     {
         $registration = $this->Registrations->newEmptyEntity();
-        $this->authorize($registration);
-
-        if($this->getUser()->isAdmin) return $this->redirect(['action' => 'all']);
+        if(!$this->authorize($registration)) return $this->redirect(['controller' => 'Registrations', 'action' => 'all']);
 
         $editionsTable = $this->getTableLocator()->get('Editions');
 
@@ -213,13 +211,14 @@ class RegistrationsController extends AppController
         $registration = $this->Registrations->get($id, [
             'contain' => [],
         ]);
+        if(!$this->authorize($registration)) return $this->redirect(['controller' => 'Registrations', 'action' => 'all']);
+
         $schools = $this->getTableLocator()->get('Schools');
         $school = $schools->findById($registration->schoolId)->firstOrFail();
 
         $students = $this->getTableLocator()->get('Students');
         $students = $students->findBySchoolid($registration->schoolId);
 
-        $this->authorize($registration);
 
         $isAdmin = $this->getUser()->isAdmin;
 
@@ -302,7 +301,7 @@ class RegistrationsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $registration = $this->Registrations->get($id);
-        $this->authorize($registration);
+        if(!$this->authorize($registration)) return $this->redirect(['controller' => 'Registrations', 'action' => 'all']);
         if ($this->Registrations->delete($registration)) {
             $this->Flash->success(__('The registration has been deleted.'));
         } else {
@@ -314,10 +313,11 @@ class RegistrationsController extends AppController
 
     private function authorize(Registration $r){
         try{
-            $this->Authorization->authorize($r);                
+            $this->Authorization->authorize($r); 
+            return true;               
         } catch(ForbiddenException $e){
             $this->Flash->error("Vous n'avez pas l'autorisation.");
-            return $this->redirect(['controller' => 'Registrations', 'action' => 'all']);
+            return false;
         } 
     }
 

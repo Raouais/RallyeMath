@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\File;
+use Authorization\Exception\ForbiddenException;
+
 /**
  * Files Controller
  *
@@ -18,6 +21,8 @@ class FilesController extends AppController
      */
     public function index($editionID = null)
     {
+
+        $this->Authorization->skipAuthorization();
         if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
         $files = $this->paginate($this->Files->findByEditionid($editionID));
 
@@ -38,6 +43,7 @@ class FilesController extends AppController
         $file = $this->Files->get($id, [
             'contain' => [],
         ]);
+        if(!$this->authorire($file)) return $this->redirect(['action', 'index']);
 
         $this->set(compact('file'));
         $this->set(compact('editionID'));
@@ -52,6 +58,7 @@ class FilesController extends AppController
     {
         if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
         $file = $this->Files->newEmptyEntity();
+        if(!$this->authorire($file)) return $this->redirect(['action', 'index']);
         if ($this->request->is('post')) {
             $file = $this->Files->patchEntity($file, $this->request->getData());
 
@@ -93,6 +100,7 @@ class FilesController extends AppController
         $file = $this->Files->get($id, [
             'contain' => [],
         ]);
+        if(!$this->authorire($file)) return $this->redirect(['action', 'index']);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $file = $this->Files->patchEntity($file, $this->request->getData());
             
@@ -133,6 +141,7 @@ class FilesController extends AppController
         if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
         $this->request->allowMethod(['post', 'delete']);
         $file = $this->Files->get($id);
+        if(!$this->authorire($file)) return $this->redirect(['action', 'index']);
         if ($this->Files->delete($file)) {
             $this->Flash->success(__('The file has been deleted.'));
         } else {
@@ -140,5 +149,15 @@ class FilesController extends AppController
         }
 
         return $this->redirect(['action' => 'index', $editionID]);
+    }
+
+    private function authorire(File $f){
+        try{
+            $this->Authorization->authorize($f);
+            return true;
+        } catch(ForbiddenException $e){
+            $this->Flash->error("Vous n'avez pas l'autorisation.");
+            return false;
+        }
     }
 }

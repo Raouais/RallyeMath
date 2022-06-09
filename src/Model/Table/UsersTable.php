@@ -102,9 +102,9 @@ class UsersTable extends Table
             ->notEmptyString('civility');
 
         $validator
-            ->integer('isAdmin')
-            ->allowEmptyString('isAdmin');
-
+            ->boolean('isAdmin')
+            ->requirePresence('isAdmin', 'create')
+            ->notEmptyString('isAdmin');
         return $validator;
     }
 

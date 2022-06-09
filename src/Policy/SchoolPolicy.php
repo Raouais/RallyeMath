@@ -20,7 +20,7 @@ class SchoolPolicy
      */
     public function canAdd(IdentityInterface $user, School $school)
     {
-        return !(new SchoolsTable())->exists(['Schools.userId' => $user->id]);
+        return !(new SchoolsTable())->exists(['Schools.userId' => $user->id]) && !$user->isAdmin;
     }
 
     /**
@@ -46,6 +46,7 @@ class SchoolPolicy
     {
         return $this->isAuthor($user,$school);
     }
+    
 
     /**
      * Check if $user can view School

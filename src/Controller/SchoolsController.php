@@ -22,7 +22,13 @@ class SchoolsController extends AppController
     public function index()
     {
         $this->Authorization->skipAuthorization();
-        $schools = $this->paginate($this->Schools->findByUserid($this->Authentication->getResult()->getData()->id));
+        if($this->getUser()->isAdmin){
+            $schools = $this->paginate($this->Schools);
+        } else {
+            $schools = $this->paginate($this->Schools->findByUserid($this->Authentication->getResult()->getData()->id));
+        }
+        $isAdmin = $this->getUser()->isAdmin;
+        $this->set(compact('isAdmin'));
         $this->set(compact('schools'));
     }
 
@@ -38,7 +44,10 @@ class SchoolsController extends AppController
         $school = $this->Schools->get($id, [
             'contain' => [],
         ]);
-        $this->authorize($school);
+        if(!$this->authorize($school)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+
+        $isAdmin = $this->getUser()->isAdmin;
+        $this->set(compact('isAdmin'));
         $this->set(compact('school'));
     }
 
@@ -50,7 +59,8 @@ class SchoolsController extends AppController
     public function add()
     {
         $school = $this->Schools->newEmptyEntity();
-        $this->authorize($school);
+        if(!$this->authorize($school)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+
         if ($this->request->is('post')) {
             $school = $this->Schools->patchEntity($school, $this->request->getData());
             $school->userId = $this->getUser()->id;
@@ -75,7 +85,8 @@ class SchoolsController extends AppController
         $school = $this->Schools->get($id, [
             'contain' => [],
         ]);
-        $this->authorize($school);
+        if(!$this->authorize($school)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $school = $this->Schools->patchEntity($school, $this->request->getData());
             if ($this->Schools->save($school)) {
@@ -95,11 +106,11 @@ class SchoolsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
+    public function delete($id = null) {
         $school = $this->Schools->get($id);
-        $this->authorize($school);
+        if(!$this->authorize($school)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+
+        $this->request->allowMethod(['post', 'delete']);
         if ($this->Schools->delete($school)) {
             $this->Flash->success(__("L'école a été supprimée avec succès."));
         } else {
@@ -112,9 +123,10 @@ class SchoolsController extends AppController
     private function authorize(School $s){
         try{
             $this->Authorization->authorize($s);
+            return true;
         } catch(ForbiddenException $e){
             $this->Flash->error("Vous n'avez pas l'autorisation.");
-            return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+            return false;
         }
     }
     
