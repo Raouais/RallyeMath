@@ -12,11 +12,6 @@ use Authorization\IdentityInterface;
  */
 class EditionPolicy
 {
-
-
-    public function canIndex(IdentityInterface $user, Edition $edition){
-        return true;
-    }
     /**
      * Check if $user can add Edition
      *
@@ -26,7 +21,7 @@ class EditionPolicy
      */
     public function canAdd(IdentityInterface $user, Edition $edition)
     {
-        return $user->isAdmin === 1;
+        return $user->isAdmin;
     }
 
     /**
@@ -38,7 +33,7 @@ class EditionPolicy
      */
     public function canEdit(IdentityInterface $user, Edition $edition)
     {
-        return $user->isAdmin === 1;
+        return $user->isAdmin;
     }
 
     /**
@@ -50,7 +45,7 @@ class EditionPolicy
      */
     public function canDelete(IdentityInterface $user, Edition $edition)
     {
-        return $user->isAdmin === 1;
+        return $user->isAdmin;
     }
 
     /**

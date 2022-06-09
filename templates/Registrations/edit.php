@@ -30,8 +30,8 @@ foreach($students as $s){
                 <legend><?= __('Modification') ?></legend>
                 <?php
                     if($isAdmin){
-                        echo $this->Form->control('isConfirm', ['label' => 'Conrfimée']);
-                        echo $this->Form->control('isFinalist', ['label' => 'En finale']);
+                        echo $this->Form->control('isConfirm', ['label' => 'Confirmer']);
+                        echo $this->Form->control('isFinalist', ['label' => 'Sélectionner pour la finale']);
                     } else {
                         echo $this->Form->control('team',['label' => "Nom de l'équipe"]);
                         echo '<label>Choisissez les élèves participants</label>';

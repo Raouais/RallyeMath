@@ -74,7 +74,7 @@ $cakeDescription = 'RALLYE MATHÉMATIQUE';
                         </li>
                         <?php elseif($isAdmin !== null && $isAdmin):?>
                             <li class="nav-item">
-                                <?= $this->Html->link(__('Inscriptions'), ['controller' => 'registrations', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                                <?= $this->Html->link(__('Inscriptions'), ['controller' => 'registrations', 'action' => 'all'], ['class' => 'nav-link']) ?>
                             </li>
                             <li class="nav-item">
                                 <?= $this->Html->link(__('Comptes'), ['controller' => 'users', 'action' => 'index'], ['class' => 'nav-link']) ?>

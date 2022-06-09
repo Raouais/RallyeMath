@@ -53,9 +53,9 @@ class SchoolsController extends AppController
         $this->authorize($school);
         if ($this->request->is('post')) {
             $school = $this->Schools->patchEntity($school, $this->request->getData());
+            $school->userId = $this->getUser()->id;
             if ($this->Schools->save($school)) {
                 $this->Flash->success(__("L'école a été ajoutée avec succès."));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__("L'école n'a pas pu être ajoutée. Veuillez réessayer s'il vous plaît."));
@@ -116,5 +116,9 @@ class SchoolsController extends AppController
             $this->Flash->error("Vous n'avez pas l'autorisation.");
             return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
         }
+    }
+    
+    private function getUser(){
+        return $this->Authentication->getResult()->getData();
     }
 }
