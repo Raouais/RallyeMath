@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\Edition;
 use App\Model\Entity\Registration;
 use Authorization\Exception\ForbiddenException;
 use Cake\Datasource\Exception\RecordNotFoundException;
@@ -16,27 +17,74 @@ use Cake\I18n\FrozenTime;
  */
 class RegistrationsController extends AppController
 {
-
-
-
     public function all(){
-
 
         $this->Authorization->skipAuthorization();
         $editionsTable = $this->getTableLocator()->get('Editions');
-        $editions = $editionsTable->find('all');
-
-        if($this->getUser()->isAdmin){
-            $registrations = $this->paginate($this->Registrations);
+        $editions = $this->paginate($editionsTable->find('all'));
+        $registrations = [];
+        
+        if(!empty($editions)){
+            $actualEdition = $this->getActualEdition($editions);
+            if(isset($actualEdition)){
+                if($this->getUser()->isAdmin){
+                    $registrations = $this->paginate($this->Registrations->findById($actualEdition->id));
+                } else {
+                    $registrations = $this->paginate($this->Registrations
+                    ->find()
+                    ->where(['Students.schoolId' => $this->getUser()->id, 'Students.registrationId' => $actualEdition->id]));
+                }        
+            }
         } else {
-            $registrations = $this->paginate($this->Registrations->findByUserid($this->getUser()->id));
-        }        
+            $showNoEditions = "Il n'y pas encore d'inscription car aucune édition n'a été créée.";
+            $this->set(compact('showNoEditions'));
+        }
+
+        if($this->request->is('post')) {
+            $editionID = $this->request->getData('edition');
+            if($this->getUser()->isAdmin){
+                $registrations = $this->paginate($this->Registrations->findById($editionID));
+            } else {
+                $registrations = $this->paginate($this->Registrations
+                ->find()
+                ->where(['Students.schoolId' => $this->getUser()->id, 'Students.registrationId' => $editionID]));
+            }
+        }
 
         $isAdmin = $this->getUser()->isAdmin;
+        $registration = new Registration();
+        $this->set(compact('registration'));
         $this->set(compact('isAdmin'));
         $this->set(compact('editions'));
         $this->set(compact('registrations'));
     }
+
+    private function getActualEdition($editions) :? Edition {
+        $timeNow = FrozenTime::now();
+
+        $deadlinesTable = $this->getTableLocator()->get('Deadlines');
+
+        $isActual = false;
+        $actualEdition = null;
+        foreach($editions as $edition){
+            $deadlines = $this->paginate($deadlinesTable->findByEditionid($edition->id));
+            if(!empty($deadlines)){
+                foreach($deadlines as $dl){
+                    if($dl->startdate >= $timeNow || $dl->enddate > $timeNow){
+                        $isActual = true;
+                        break;
+                    }
+                }
+            }
+            if($isActual){
+                $actualEdition = $edition;
+                break;
+            }
+        }
+        return $actualEdition;
+    }
+
+
     /**
      * Index method
      *
@@ -45,26 +93,18 @@ class RegistrationsController extends AppController
     public function index($editionID = null)
     {
         $this->Authorization->skipAuthorization();
-        $isAdmin = $this->getUser()->isAdmin;
+        if($this->getUser()->isAdmin) $this->redirect(['action' => 'all']);
 
         $editionsTable = $this->getTableLocator()->get('Editions');
 
-        if($editionID == null && $isAdmin){
-            $editions = $editionsTable->find('all');
-            $this->set(compact('editions'));
-        } else if($editionID == null) {
+        if($editionID == null) {
             $this->Flash->error(__("Erreur URL. Veuillez ne pas accéder aux pages depuis l'URL."));
             return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
         }
-        
-        if($this->getUser()->isAdmin){
-            $registrations = $this->paginate($this->Registrations);
-        } else {
-            $registrations = $this->paginate($this->Registrations->findByEditionid($editionID));
-            $editionName = $editionsTable->findById($editionID)->firstOrFail()->title;
-        }
 
-        $this->set(compact('isAdmin'));
+        $registrations = $this->paginate($this->Registrations->findByEditionid($editionID));
+        $editionName = $editionsTable->findById($editionID)->firstOrFail()->title;
+
         $this->set(compact('registrations'));
         $this->set(compact('editionID'));
         $this->set(compact('editionName'));
@@ -125,10 +165,8 @@ class RegistrationsController extends AppController
         try{
             $school = $this->getSchool();
         } catch(RecordNotFoundException $e){
-            if(!$this->getUser()->isAdmin){
-                $this->Flash->error(__("Vous devez créer une école avant de s'inscrire à une édition."));
-                return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
-            }
+            $this->Flash->error(__("Vous devez créer une école avant de s'inscrire à une édition."));
+            return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
         }
 
         $students = $this->getTableLocator()->get('Students');

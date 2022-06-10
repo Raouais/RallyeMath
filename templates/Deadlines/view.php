@@ -1,8 +1,16 @@
 <?php
+
+use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Deadline $deadline
  */
+
+function formatTime($time){
+    return (new FrozenTime($time))->format('d-m-Y H:i:s');
+}
 ?>
 <div class="row">
     <aside class="column">
@@ -24,19 +32,19 @@
                 </tr>
                 <tr>
                     <th><?= __('Début') ?></th>
-                    <td><?= h($deadline->startdate) ?></td>
+                    <td><?= h(formatTime($deadline->startdate)) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Fin') ?></th>
-                    <td><?= h($deadline->enddate) ?></td>
+                    <td><?= h(formatTime($deadline->enddate)) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Créée') ?></th>
-                    <td><?= h($deadline->created) ?></td>
+                    <td><?= h(formatTime($deadline->created)) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Modifiée') ?></th>
-                    <td><?= h($deadline->modified) ?></td>
+                    <td><?= h(formatTime($deadline->modified)) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Dernière échéance') ?></th>

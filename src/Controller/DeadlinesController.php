@@ -5,6 +5,8 @@ namespace App\Controller;
 
 use App\Model\Entity\Deadline;
 use Authorization\Exception\ForbiddenException;
+use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
 
 /**
  * Deadlines Controller
@@ -64,13 +66,17 @@ class DeadlinesController extends AppController
         if ($this->request->is('post')) {
             $deadline = $this->Deadlines->patchEntity($deadline, $this->request->getData());
             $deadline->editionId = $editionID;
-            if ($this->Deadlines->save($deadline)) {
-                $this->Flash->success(__('The deadline has been saved.'));
-
-                return $this->redirect(['action' => 'index', $editionID]);
+            $startDate = new FrozenTime($this->request->getData('startdate'));
+            $endDate = new FrozenTime($this->request->getData('enddate'));
+            if($this->isDeadlineValidInsertion($editionID,$startDate,$endDate)){
+                if ($this->Deadlines->save($deadline)) {
+                    $this->Flash->success(__("L'échéance a été ajoutée avec succès."));
+                    return $this->redirect(['action' => 'index', $editionID]);
+                }
+                $this->Flash->error(__("L'échéance n'a pu être ajoutée. Veuillez réessayer."));
             }
-            $this->Flash->error(__('The deadline could not be saved. Please, try again.'));
         }
+
         $this->set(compact('deadline'));
         $this->set(compact('editionID'));
     }
@@ -93,15 +99,143 @@ class DeadlinesController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $deadline = $this->Deadlines->patchEntity($deadline, $this->request->getData());
             $deadline->editionId = $editionID;
-            if ($this->Deadlines->save($deadline)) {
-                $this->Flash->success(__('The deadline has been saved.'));
+            $startDate = new FrozenTime($this->request->getData('startdate'));
+            $endDate = new FrozenTime($this->request->getData('enddate'));
+            if($this->isDeadlineValidEditing($editionID,$startDate,$endDate)){
+                if ($this->Deadlines->save($deadline)) {
+                    $this->Flash->success(__("L'échéance a été modifiée avec succès."));
 
-                return $this->redirect(['action' => 'index']);
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__("L'échéance n'a pu être modifiée. Veuillez réessayer."));
             }
-            $this->Flash->error(__('The deadline could not be saved. Please, try again.'));
         }
         $this->set(compact('deadline'));
         $this->set(compact('editionID'));
+    }
+
+
+    private function isCurrentDeadlinesLimited($editionID){
+        $deadlines = $this->paginate($this->Deadlines->findByEditionid($editionID));
+        $hasLimit = false;
+        if(!empty($deadlines)){
+            foreach($deadlines as $dl){
+                if($dl->isLimit){
+                    $hasLimit = true;
+                    break;
+                }
+            }
+        }
+        if(!$hasLimit) $this->Flash->error(__("Il y a déjà une échéance dernière échéance limite."));
+        return $hasLimit;
+    }
+
+    private function date_sort($a,$b){
+        return $a < $b;
+    }
+
+    /**
+     * $dstart > $dend ok -> false
+     * 
+     * 
+     * s'il y a qu'une échéance alors $dstart > $deadline->startdate ok -> true 
+     * s'il y a plusieurs échéances - Trier les échéances par ordre croissant 
+     *                              - tester ($dstart > $dates[$i] && $dstart < $dates[$i + 1] && $dend < $dates[$i + 1]) ok -> true
+     * sinon false
+     */
+    private function isDeadlineValidEditing($editionID, $dstart, $dend){
+        if($dstart > $dend){
+            $this->Flash->error(__("La date de départ doit être plus grande que la date de fin."));
+            return false;
+        }
+
+        if(!$this->isCurrentDeadlinesLimited($editionID)) return false;  
+
+        $deadlines = $this->paginate($this->Deadlines->findByEditionid($editionID));
+        $dates = [];
+        $isDateBetween = false;
+        if(!empty($deadlines)){
+            foreach($deadlines as $dl){
+                $dates[] = $dl->startdate;
+                $dates[] = $dl->enddate;
+            }
+            if(sizeof($dates) > 2){
+                usort($dates, [DeadlinesController::class, "date_sort"]);
+                for($i = 1; $i + 1 < sizeof($dates); $i+=2){
+                    if($dstart > $dates[$i] && $dstart < $dates[$i + 1] && $dend < $dates[$i + 1]){
+                        $isDateBetween = true;
+                        break;
+                    }
+                }
+            } else if($dstart > $dates[1]){
+                    return true;
+            } else {
+                $this->Flash->error(__("L'échéance doit être comprise entre deux échéances ou
+                                            \n être plus grandes que les échéanches actuelles."));
+                return false;
+            }
+            if($isDateBetween) return true; 
+        }
+        return true;
+        
+    }
+
+    private function isDeadlineValidInsertion($editionID, $dstart, $dend){
+        $timeNow = FrozenTime::now();
+        if($dstart > $dend){
+            $this->Flash->error(__("La date de départ doit être plus grande que la date de fin."));
+            return false;
+        }
+        
+        if($dstart < $timeNow){
+            $this->Flash->error(__("La date de départ doit être plus grande que la date de maintenant."));
+            return false;
+        }
+
+        if(!$this->isCurrentDeadlinesLimited($editionID)) return false;  
+
+        return !$this->isCurrentEditionDeadlineBigger($editionID, $dstart) && !$this->hasActualEdition($dstart,$dend);
+    }
+
+    private function isCurrentEditionDeadlineBigger($editionID, $dstart){
+        $hasCurrentEditionDeadlineBigger = false;
+        $deadlines = $this->paginate($this->Deadlines->findByEditionid($editionID));
+        if(!empty($deadlines)){
+            foreach($deadlines as $dl){
+                if($dl->startdate > $dstart){
+                    $hasCurrentEditionDeadlineBigger = true;
+                    break;
+                }
+            }
+        }
+        if($hasCurrentEditionDeadlineBigger){
+            $this->Flash->error(__("Dans l'édition actuel, il y a une échéance plus grande que celle que vous voulez créer."));
+        } else {
+            return false;
+        }
+        return true; 
+    }
+
+    private function hasActualEdition($startDate, $endDate){
+        $editionsTable = $this->getTableLocator()->get('Editions');
+        $editions = $editionsTable->find('all');
+        $hasAnotherCurrentEditionDeadline = false;
+        foreach($editions as $edition){
+            $deadlines = $this->paginate($this->Deadlines->findByEditionid($edition->id));
+            if(!empty($deadlines)){
+                foreach($deadlines as $dl){
+                    if($dl->startdate >= $startDate || $dl->enddate > $endDate){
+                        $hasAnotherCurrentEditionDeadline = true;
+                        break;
+                    }
+                }
+            }
+            if($hasAnotherCurrentEditionDeadline){
+                $this->Flash->error(__("Il y a encore une édition en cours à cette date."));
+                break;
+            }
+        }
+        return $hasAnotherCurrentEditionDeadline;
     }
 
     /**
@@ -119,9 +253,9 @@ class DeadlinesController extends AppController
         $deadline = $this->Deadlines->get($id);
         if(!$this->authorire($deadline)) return $this->redirect(['action' => 'index']);
         if ($this->Deadlines->delete($deadline)) {
-            $this->Flash->success(__('The deadline has been deleted.'));
+            $this->Flash->success(__("L'échéance & été supprimée avec succès."));
         } else {
-            $this->Flash->error(__('The deadline could not be deleted. Please, try again.'));
+            $this->Flash->error(__("L'échéance n'a pas pu être supprimée. Veuillez réessayer."));
         }
 
         return $this->redirect(['action' => 'index', $editionID]);

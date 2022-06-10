@@ -1,8 +1,14 @@
 <?php
+use Cake\I18n\FrozenTime;
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Deadline[]|\Cake\Collection\CollectionInterface $deadlines
  */
+
+function formatTime($time){
+    return (new FrozenTime($time))->format('d-m-Y H:i:s');
+}
 ?>
 <div class="deadlines index content">
     <?= $this->Html->link(__('New Deadline'), ['action' => 'add', $editionID], ['class' => 'button float-right']) ?>

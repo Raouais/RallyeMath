@@ -50,10 +50,8 @@ function getIcon($isOk)
                     <th><?= $this->Paginator->sort('description') ?></th>
                     <th><?= $this->Paginator->sort("Nombre d'élèves") ?></th>
                     <th><?= $this->Paginator->sort('Année scolaire') ?></th>
-                    <?php if ($isAdmin) : ?>
-                        <th><?= $this->Paginator->sort("Echéances") ?></th>
-                        <th><?= $this->Paginator->sort("Photos") ?></th>
-                    <?php endif ?>
+                    <th><?= $this->Paginator->sort("Echéances") ?></th>
+                    <th><?= $this->Paginator->sort("Photos") ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
@@ -84,7 +82,11 @@ function getIcon($isOk)
                                         $hasLimit = true;
                                     }
                                 }
+                                $deadline = [];
+                            } else {
+                                $hasLimit = false;
                             }
+                            
                         ?>
 
                         <?php if ($isAdmin) : ?>
@@ -93,7 +95,7 @@ function getIcon($isOk)
                                 <?php if ($hasLimit) : ?>
                                     <?= getIcon($hasLimit) ?>
                                     <?= $this->Html->link(__('Voir'), ['controller' => 'deadlines', 'action' => 'index', $edition->id]) ?>
-                                <?php else : ?>
+                                <?php else:?>
                                     <?= getIcon($hasLimit) ?>
                                     <?= $this->Html->link(__('Créer'), ['controller' => 'deadlines', 'action' => 'index', $edition->id]) ?>
                                 <?php endif ?>
