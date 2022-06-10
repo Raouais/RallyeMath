@@ -34,7 +34,7 @@ class EditionPolicy
      */
     public function canEdit(IdentityInterface $user, Edition $edition)
     {
-        return $user->isAdmin == 1 && $edition->enddate > FrozenTime::now();
+        return $user->isAdmin == 1;
     }
 
     /**
@@ -47,7 +47,7 @@ class EditionPolicy
     public function canDelete(IdentityInterface $user, Edition $edition)
     {
         
-        return $user->isAdmin == 1;
+        return $user->isAdmin == 1 && $edition->enddate > FrozenTime::now();
     }
 
     /**

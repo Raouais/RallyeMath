@@ -24,21 +24,20 @@ class StudentsController extends AppController
     {
         $this->Authorization->skipAuthorization();
         $isAdmin = $this->getUser()->isAdmin;
-        
+
         $table = $this->getTableLocator()->get('Schools');
         $schools = $table->find('all');
-        
-        if($schoolID == null){
-            try{
-                $schoolID = $this->getSchool()->id;
-                $students = $this->paginate($this->Students->findBySchoolid($schoolID));
-            }catch(RecordNotFoundException $e){
-                if($isAdmin){
-                    $students = $this->paginate($this->Students);
-                } else {
-                    $this->Flash->error(__("Vous devez créer une école avant de créer des élèves."));
-                    return $this->redirect(['controller' => 'pages', 'action' => 'home']);
-                }
+
+
+        try{
+            $schoolID = $this->getSchool()->id;
+            $students = $this->paginate($this->Students->findBySchoolid($schoolID));
+        }catch(RecordNotFoundException $e){
+            if($isAdmin){
+                $students = $this->paginate($this->Students);
+            } else {
+                $this->Flash->error(__("Vous devez créer une école avant de créer des élèves."));
+                return $this->redirect(['controller' => 'pages', 'action' => 'home']);
             }
         }
 

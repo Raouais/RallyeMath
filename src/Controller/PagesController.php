@@ -77,6 +77,8 @@ class PagesController extends AppController
         if($page == 'home'){
             $actualEdition = $this->getActualEdition();
             if($actualEdition != null){
+                $auth = $this->Authentication->getResult();
+                $this->set(compact('auth'));
                 $this->set(compact('actualEdition'));
             }
         }

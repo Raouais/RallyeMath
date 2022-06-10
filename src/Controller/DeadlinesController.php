@@ -106,14 +106,16 @@ class DeadlinesController extends AppController
             $deadline->editionId = $editionID;
             $startDate = new FrozenTime($this->request->getData('startdate'));
             $endDate = new FrozenTime($this->request->getData('enddate'));
-            if($this->isDeadlineValidEditing($editionID,$startDate,$endDate)){
-                if ($this->Deadlines->save($deadline)) {
-                    $this->Flash->success(__("L'échéance a été modifiée avec succès."));
-
-                    return $this->redirect(['action' => 'index']);
-                }
-                $this->Flash->error(__("L'échéance n'a pu être modifiée. Veuillez réessayer."));
-            }
+            if(!($this->request->getData('isLimit') && $this->isCurrentDeadlinesLimited($editionID))){
+                if($this->isDeadlineValidEditing($editionID,$startDate,$endDate)){
+                    if ($this->Deadlines->save($deadline)) {
+                        $this->Flash->success(__("L'échéance a été modifiée avec succès."));
+    
+                        return $this->redirect(['action' => 'index']);
+                    }
+                    $this->Flash->error(__("L'échéance n'a pu être modifiée. Veuillez réessayer."));
+                }    
+            } 
         }
         $this->set(compact('deadline'));
         $this->set(compact('editionID'));
@@ -153,8 +155,6 @@ class DeadlinesController extends AppController
             $this->Flash->error(__("La date de départ doit être plus grande que la date de fin."));
             return false;
         }
-
-        if($this->isCurrentDeadlinesLimited($editionID)) return false;  
 
         $deadlines = $this->paginate($this->Deadlines->findByEditionid($editionID));
         $dates = [];

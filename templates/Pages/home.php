@@ -16,11 +16,16 @@
                     if(isset($actualEdition)){
                         echo '"'.$actualEdition->title.'"'. " est l'édition actuel. ";
                         echo "<p>Qu'attendez-vous pour vous inscrire ?</p>";
-                        $this->Html->link(__("S'inscrire"), ['controller' => 'Users', 'action' => 'add']);
+                        if($auth->isValid()){
+                            echo $this->Html->link(__("S'inscrire"), ['controller' => 'Editions', 'action' => 'index']);
+                        } else {
+                            echo $this->Html->link(__("S'inscrire"), ['controller' => 'Users', 'action' => 'add']);
+                        }
                     } 
                     ?>
             </h1>
         </div>
+</header>
 
     <div class=" p-4 border border-1 shadow">
 

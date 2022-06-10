@@ -31,8 +31,8 @@
                         <?= $this->Html->link(__('Voir'), ['action' => 'view', $school->id]) ?>
                         <?php if(!$isAdmin):?>
                             <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $school->id]) ?>
-                            <?= $this->Html->link(__('Ajouter un élève'), ['controller' => 'students', 'action' => 'index', $school->id]) ?>
                             <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $school->id], ['confirm' => __('Are you sure you want to delete # {0}?', $school->id)]) ?>
+                            <?= $this->Html->link(__('Ajouter un élève'), ['controller' => 'students', 'action' => 'index', $school->id]) ?>
                         <?php endif?>
                     </td>
                 </tr>

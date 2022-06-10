@@ -50,6 +50,12 @@ class UsersTable extends Table
             'dependent' => true,
             'cascadeCallbacks' => true
         ]);
+
+        $this->hasMany('Schools', [
+            'foreignKey' => 'userId',
+            'dependent' => true,
+            'cascadeCallbacks' => true
+        ]);
     }
 
     /**
