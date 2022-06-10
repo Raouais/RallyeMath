@@ -1,3 +1,5 @@
+
+
 <header>
         <div class="container text-center">
             <a href="#" target="_blank" rel="noopener">
@@ -5,11 +7,32 @@
                  [ 'width' => '500', 'alt' => 'Logo Rallye', 'url' => ['controller' => 'pages', 'action' => 'home']]); ?> >
             </a>
             <h1 class="">
-
+                    <?php
+                    
+                    if(isset($actualEdition)){
+                        echo '"'.$actualEdition->title.'"'. " est l'édition actuel. ";
+                    }
+                    ?>
+                    <p>Qu'attendez-vous pour vous inscrire ?</p>
             </h1>
         </div>
 
     <div class=" p-4 border border-1 shadow">
+
+
+    <h2>
+        Bienvenue sur la page du Rallye Mathématique de la Haute Ecole Robert Schuman!
+    </h2>
+
+    <p>
+        Notre concours est destiné à des élèves de sixième primaire de l'enseignement fondamental. Il se déroule en deux temps: une épreuve de qualification et une finale. Lors de ces épreuves, les élèves disposent d'une heure pour résoudre en équipe une série de défis mathématiques.
+
+    </p>
+
+    <br>
+
+    <p>Les énoncés sont créés par les étudiants du Département Pédagogique de la Haute Ecole Robert Schuman.</p>
+<br>
         <h3>
             Créé en 1992, le concours de mathématiques destiné aux élèves de 6e primaire.
         </h3>
@@ -40,5 +63,13 @@
         </p>
         <p>
             L’an dernier, nous avons fortement innové pour la finale. Plutôt que de demander un travail sur feuilles, les élèves ont dû manipuler, estimer, observer, ou encore mémoriser au travers d’ateliers animés par des étudiants. De ce fait, il n'y a plus eu de proclamation avec un grand vainqueur, mais des classements par atelier et une remise de cadeaux identiques pour chaque groupe d’élèves.
+        </p>
+
+        <br>
+
+        <p class="text-center">
+            <b>
+                A bientôt et bonne visite sur notre site.
+            </b>
         </p>
     </div>

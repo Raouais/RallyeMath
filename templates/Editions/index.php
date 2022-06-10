@@ -5,6 +5,8 @@
  * @var \App\Model\Entity\Edition[]|\Cake\Collection\CollectionInterface $editions
  */
 
+use Cake\I18n\FrozenTime;
+
 $deadline = [];
 $hasLimit = false;
 
@@ -34,11 +36,11 @@ function getIcon($isOk)
     <h3><?= __('Editions') ?></h3>
 
     <p>
-        Contient une date de départ et une date de fin.
+        Edition disponible
         <?= getIcon(true) ?>
     </p>
     <p>
-        Ne contient pas date ou n'a pas de date de fin.
+        Edition non disponible.
         <?= getIcon(false) ?>
     </p>
 
@@ -78,7 +80,7 @@ function getIcon($isOk)
 
                             if (!empty($deadline)) {
                                 foreach ($deadline as $d) {
-                                    if ($d->isLimit == true) {
+                                    if ($d->isLimit == true && new FrozenTime($d->enddate) > FrozenTime::now()) {
                                         $hasLimit = true;
                                     }
                                 }

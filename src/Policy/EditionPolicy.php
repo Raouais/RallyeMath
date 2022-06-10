@@ -45,6 +45,7 @@ class EditionPolicy
      */
     public function canDelete(IdentityInterface $user, Edition $edition)
     {
+        
         return $user->isAdmin == 1;
     }
 

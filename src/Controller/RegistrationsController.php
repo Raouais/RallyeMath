@@ -97,6 +97,8 @@ class RegistrationsController extends AppController
 
         $editionsTable = $this->getTableLocator()->get('Editions');
 
+        $this->isEditionAvailable($editionID);
+
         if($editionID == null) {
             $this->Flash->error(__("Erreur URL. Veuillez ne pas accéder aux pages depuis l'URL."));
             return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
@@ -326,8 +328,44 @@ class RegistrationsController extends AppController
             }
             $IsSelected = false;
         }
-
     }
+
+    private function isEditionAvailable($editionID){
+        
+        $editionsTable = $this->getTableLocator()->get('Editions');
+        $actualEdition = $this->getActualEdition($editionsTable->find('all'));
+
+        if($actualEdition == null){
+            $this->Flash->error(__("Il n'y a pas d'édition disponible actuellement."));
+            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+        }
+
+
+        if($actualEdition->id != $editionID){
+            $this->Flash->error(__("Cette édition n'est plus disponible."));
+            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+        }
+
+        $deadlines = ($this->getTableLocator()->get('Deadlines'))->findByEditionid($actualEdition->id);
+
+        if(empty($deadlines)){
+            $this->Flash->error(__("Cette édition n'a pas encore de dates définies."));
+            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+        }
+
+        $deadlineLimit = null;
+        foreach($deadlines as $dl){
+            if($dl->isLimit){
+                $deadlineLimit = $dl;
+            }
+        }
+
+        if(new FrozenTime($deadlineLimit->enddate) <= FrozenTime::now()){
+            $this->Flash->error(__("Cette édition est terminée."));
+            return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
+        }
+    }
+
     /**
      * Delete method
      *

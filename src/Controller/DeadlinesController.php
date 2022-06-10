@@ -126,7 +126,7 @@ class DeadlinesController extends AppController
                 }
             }
         }
-        if(!$hasLimit) $this->Flash->error(__("Il y a déjà une échéance dernière échéance limite."));
+        if($hasLimit) $this->Flash->error(__("Il y a déjà une dernière échéance limite."));
         return $hasLimit;
     }
 
@@ -149,7 +149,7 @@ class DeadlinesController extends AppController
             return false;
         }
 
-        if(!$this->isCurrentDeadlinesLimited($editionID)) return false;  
+        if($this->isCurrentDeadlinesLimited($editionID)) return false;  
 
         $deadlines = $this->paginate($this->Deadlines->findByEditionid($editionID));
         $dates = [];
@@ -192,9 +192,9 @@ class DeadlinesController extends AppController
             return false;
         }
 
-        if(!$this->isCurrentDeadlinesLimited($editionID)) return false;  
+        if($this->isCurrentDeadlinesLimited($editionID)) return false;  
 
-        return !$this->isCurrentEditionDeadlineBigger($editionID, $dstart) && !$this->hasActualEdition($dstart,$dend);
+        return !$this->isCurrentEditionDeadlineBigger($editionID, $dstart) && !$this->hasActualEdition();
     }
 
     private function isCurrentEditionDeadlineBigger($editionID, $dstart){
@@ -216,7 +216,8 @@ class DeadlinesController extends AppController
         return true; 
     }
 
-    private function hasActualEdition($startDate, $endDate){
+    private function hasActualEdition(){
+        $timeNow = FrozenTime::now();
         $editionsTable = $this->getTableLocator()->get('Editions');
         $editions = $editionsTable->find('all');
         $hasAnotherCurrentEditionDeadline = false;
@@ -224,14 +225,14 @@ class DeadlinesController extends AppController
             $deadlines = $this->paginate($this->Deadlines->findByEditionid($edition->id));
             if(!empty($deadlines)){
                 foreach($deadlines as $dl){
-                    if($dl->startdate >= $startDate || $dl->enddate > $endDate){
+                    if($dl->startdate >= $timeNow || $dl->enddate > $timeNow){
                         $hasAnotherCurrentEditionDeadline = true;
                         break;
                     }
                 }
             }
             if($hasAnotherCurrentEditionDeadline){
-                $this->Flash->error(__("Il y a encore une édition en cours à cette date."));
+                $this->Flash->error(__("Vous devez attentre que les échéances de l'édition actuel soit finie pour créer des nouvelles échéances."));
                 break;
             }
         }
@@ -253,7 +254,7 @@ class DeadlinesController extends AppController
         $deadline = $this->Deadlines->get($id);
         if(!$this->authorire($deadline)) return $this->redirect(['action' => 'index']);
         if ($this->Deadlines->delete($deadline)) {
-            $this->Flash->success(__("L'échéance & été supprimée avec succès."));
+            $this->Flash->success(__("L'échéance a été supprimée avec succès."));
         } else {
             $this->Flash->error(__("L'échéance n'a pas pu être supprimée. Veuillez réessayer."));
         }

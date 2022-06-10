@@ -5,9 +5,7 @@
  */
 ?>
 <div class="registrations index content">
-    <?php if(!$isAdmin):?>
     <?= $this->Html->link(__("Créer une inscription"), ['action' => 'add', $editionID], ['class' => 'button float-right']) ?>
-    <?php endif?>
     <h3><?= __('Inscription') ?></h3>
     <div class="table-responsive">
         <table>

@@ -44,6 +44,24 @@ class EditionsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->hasMany('Registrations', [
+            'foreignKey' => 'editionId',
+            'dependent' => true,
+            'cascadeCallbacks' => true
+        ]);
+
+        $this->hasMany('Files', [
+            'foreignKey' => 'editionId',
+            'dependent' => true,
+            'cascadeCallbacks' => true
+        ]);
+
+        $this->hasMany('Deadlines', [
+            'foreignKey' => 'editionId',
+            'dependent' => true,
+            'cascadeCallbacks' => true
+        ]);
     }
 
     /**

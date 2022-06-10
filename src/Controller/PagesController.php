@@ -16,11 +16,14 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
+use App\Model\Entity\Edition;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
+use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
 use Cake\View\Exception\MissingTemplateException;
 
 /**
@@ -71,6 +74,13 @@ class PagesController extends AppController
         $this->set(compact('page', 'subpage'));
         $this->Authorization->skipAuthorization();
 
+        if($page == 'home'){
+            $actualEdition = $this->getActualEdition();
+            if($actualEdition != null){
+                $this->set(compact('actualEdition'));
+            }
+        }
+
         try {
             return $this->render(implode('/', $path));
         } catch (MissingTemplateException $exception) {
@@ -79,5 +89,36 @@ class PagesController extends AppController
             }
             throw new NotFoundException();
         }
+    }
+
+    private function getActualEdition() :? Edition {
+
+        $actualEdition = null;
+        $editionsTable = $this->getTableLocator()->get('Editions');
+        $editions = $this->paginate($editionsTable->find('all'));
+
+        if(!empty($editions)){
+            $timeNow = FrozenTime::now();
+            $deadlinesTable = $this->getTableLocator()->get('Deadlines');
+    
+            $isActual = false;
+            foreach($editions as $edition){
+                $deadlines = $this->paginate($deadlinesTable->findByEditionid($edition->id));
+                if(!empty($deadlines)){
+                    foreach($deadlines as $dl){
+                        if($dl->startdate >= $timeNow || $dl->enddate > $timeNow){
+                            $isActual = true;
+                            break;
+                        }
+                    }
+                }
+                if($isActual){
+                    $actualEdition = $edition;
+                    break;
+                }
+            }
+        }
+
+        return $actualEdition;
     }
 }
