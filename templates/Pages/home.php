@@ -11,9 +11,9 @@
                     
                     if(isset($actualEdition)){
                         echo '"'.$actualEdition->title.'"'. " est l'édition actuel. ";
-                    }
+                        echo "<p>Qu'attendez-vous pour vous inscrire ?</p>";
+                    } 
                     ?>
-                    <p>Qu'attendez-vous pour vous inscrire ?</p>
             </h1>
         </div>
 

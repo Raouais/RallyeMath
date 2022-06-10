@@ -5,8 +5,8 @@ namespace App\Controller;
 
 use App\Model\Entity\User;
 use Authorization\Exception\ForbiddenException;
-use Cake\Auth\DefaultPasswordHasher;
 use Cake\Event\EventInterface;
+use Cake\Mailer\Email;
 
 /**
  * Users Controller
@@ -80,6 +80,7 @@ class UsersController extends AppController
             if($this->request->getData('password_confirm') !== $this->request->getData('password')){
                 $this->Flash->error(__('Les mots de passes doivent être identiques.'));
             } else if ($this->Users->save($user)) {
+                $this->sendEmail($user->email);
                 $this->Flash->success(__("L'utilisateur a été ajouté avec succès"));
                 if($this->Authentication->getResult()->isValid()){
                     return $this->redirect(['controller' => 'pages', 'action' => 'home']);
@@ -90,6 +91,14 @@ class UsersController extends AppController
         }
 
         $this->set(compact('user'));
+    }
+
+    private function sendEmail($userEmail){
+        $email = new Email('default');
+        $email->setFrom(["rallye.math@hers.be" => 'Site RallyMath'])
+                ->setTo($userEmail)
+                ->setSubject("Votre compte sur RallyeMath")
+                ->send("Bienvenue sur RallyeMath ! Votre compte a bien été enregistré");
     }
 
     /**
