@@ -47,7 +47,7 @@ class RegistrationsController extends AppController
             } else {
                 $registrations = $this->paginate($this->Registrations
                 ->find()
-                ->where(['Registrations.userId' => $this->getUser()->id, 'Registrations.id' => $actualEdition->id]));
+                ->where(['Registrations.userId' => $this->getUser()->id, 'Registrations.id' => $editionID]));
             }
         }
 

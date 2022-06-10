@@ -11,7 +11,9 @@ function formatTime($time){
 }
 ?>
 <div class="deadlines index content">
+<?php if($isAdmin):?>
     <?= $this->Html->link(__('New Deadline'), ['action' => 'add', $editionID], ['class' => 'button float-right']) ?>
+<?php endif?>
     <h3><?= __('Echéances') ?></h3>
     <div class="table-responsive">
         <table>
@@ -33,8 +35,10 @@ function formatTime($time){
                     <td><?= h($deadline->isLimit == 1 ? "Oui" : "Non") ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('Voir'), ['action' => 'view', $deadline->id, $editionID]) ?>
-                        <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $deadline->id, $editionID]) ?>
-                        <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $deadline->id, $editionID], ['confirm' => __('Are you sure you want to delete # {0}?', $deadline->id)]) ?>
+                        <?php if($isAdmin):?>
+                            <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $deadline->id, $editionID]) ?>
+                            <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $deadline->id, $editionID], ['confirm' => __('Are you sure you want to delete # {0}?', $deadline->id)]) ?>
+                        <?php endif?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

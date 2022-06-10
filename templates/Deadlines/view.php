@@ -16,9 +16,11 @@ function formatTime($time){
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Ajouter'), ['action' => 'add', $editionID], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $deadline->id, $editionID], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $deadline->id, $editionID], ['confirm' => __('Are you sure you want to delete # {0}?', $deadline->id), 'class' => 'side-nav-item']) ?>
+            <?php if($isAdmin):?>
+                <?= $this->Html->link(__('Ajouter'), ['action' => 'add', $editionID], ['class' => 'side-nav-item']) ?>
+                <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $deadline->id, $editionID], ['class' => 'side-nav-item']) ?>
+                <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $deadline->id, $editionID], ['confirm' => __('Are you sure you want to delete # {0}?', $deadline->id), 'class' => 'side-nav-item']) ?>
+            <?php endif?>
             <?= $this->Html->link(__('Revenir à la lise'), ['action' => 'index', $editionID], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>

@@ -23,8 +23,10 @@
                     <td><?= h($file->type) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('Voir'), ['action' => 'view', $file->id, $editionID]) ?>
+                    <?php if($isAdmin):?>
                         <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $file->id, $editionID]) ?>
                         <?= $this->Form->postLink(__('Supprimer'), ['action' => 'delete', $file->id, $editionID], ['confirm' => __('Are you sure you want to delete # {0}?', $file->id)]) ?>
+                    <?php endif?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

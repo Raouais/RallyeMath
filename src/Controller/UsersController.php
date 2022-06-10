@@ -82,7 +82,7 @@ class UsersController extends AppController
             } else if($this->request->getData('password_confirm') !== $this->request->getData('password')){
                 $this->Flash->error(__('Les mots de passes doivent être identiques.'));
             } else if ($this->Users->save($user)) {
-                //$this->sendEmail($user->email);
+                $this->sendEmail($user->email);
                 $this->Flash->success(__("L'utilisateur a été ajouté avec succès"));
                 if($this->Authentication->getResult()->isValid()){
                     return $this->redirect(['controller' => 'pages', 'action' => 'home']);
@@ -96,8 +96,8 @@ class UsersController extends AppController
     }
 
     private function emailRegex($userEmail){
-        $pattern = "/(@[a-zA-Z]*.hers.be)$|(@hers.be)$/i";
-        preg_match($pattern, $userEmail); 
+        $pattern = "/hers.be$/i";
+        return preg_match($pattern, $userEmail) == 1; 
     }
 
 

@@ -6,6 +6,7 @@ namespace App\Policy;
 use App\Model\Entity\Edition;
 use Authentication\Identity;
 use Authorization\IdentityInterface;
+use Cake\I18n\FrozenTime;
 
 /**
  * Edition policy
@@ -33,7 +34,7 @@ class EditionPolicy
      */
     public function canEdit(IdentityInterface $user, Edition $edition)
     {
-        return $user->isAdmin == 1;
+        return $user->isAdmin == 1 && $edition->enddate > FrozenTime::now();
     }
 
     /**

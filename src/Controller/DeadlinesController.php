@@ -29,6 +29,8 @@ class DeadlinesController extends AppController
 
         $deadlines = $this->paginate($this->Deadlines->findByEditionid($editionID),  ['limit' => '3']);
 
+        $isAdmin = $this->getUser()->isAdmin;
+        $this->set(compact('isAdmin'));
         $this->set(compact('deadlines'));
         $this->set(compact('editionID'));
     }
@@ -48,6 +50,9 @@ class DeadlinesController extends AppController
             'contain' => [],
         ]);
         if(!$this->authorire($deadline)) return $this->redirect(['action' => 'index']);
+
+        $isAdmin = $this->getUser()->isAdmin;
+        $this->set(compact('isAdmin'));
         $this->set(compact('deadline'));
         $this->set(compact('editionID'));
     }
@@ -270,5 +275,9 @@ class DeadlinesController extends AppController
             $this->Flash->error("Vous n'avez pas l'autorisation.");
             return false;
         }
+    }
+
+    private function getUser(){
+        return $this->Authentication->getResult()->getData();
     }
 }

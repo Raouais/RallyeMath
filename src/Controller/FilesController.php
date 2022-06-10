@@ -26,6 +26,8 @@ class FilesController extends AppController
         if($editionID == null) return $this->redirect(['controller' => 'editions', 'action' => 'index']);
         $files = $this->paginate($this->Files->findByEditionid($editionID));
 
+        $isAdmin = $this->getUser()->isAdmin;
+        $this->set(compact('isAdmin'));
         $this->set(compact('files'));
         $this->set(compact('editionID'));
     }
@@ -45,6 +47,8 @@ class FilesController extends AppController
         ]);
         if(!$this->authorire($file)) return $this->redirect(['action', 'index']);
 
+        $isAdmin = $this->getUser()->isAdmin;
+        $this->set(compact('isAdmin'));
         $this->set(compact('file'));
         $this->set(compact('editionID'));
     }
@@ -159,5 +163,9 @@ class FilesController extends AppController
             $this->Flash->error("Vous n'avez pas l'autorisation.");
             return false;
         }
+    }
+
+    private function getUser(){
+        return $this->Authentication->getResult()->getData();
     }
 }

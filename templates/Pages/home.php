@@ -1,4 +1,8 @@
-
+<?php
+/**
+ * @var \App\View\AppView $this
+ */
+?>
 
 <header>
         <div class="container text-center">
@@ -12,6 +16,7 @@
                     if(isset($actualEdition)){
                         echo '"'.$actualEdition->title.'"'. " est l'édition actuel. ";
                         echo "<p>Qu'attendez-vous pour vous inscrire ?</p>";
+                        $this->Html->link(__("S'inscrire"), ['controller' => 'Users', 'action' => 'add']);
                     } 
                     ?>
             </h1>
