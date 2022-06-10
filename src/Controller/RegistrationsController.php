@@ -32,7 +32,7 @@ class RegistrationsController extends AppController
                 } else {
                     $registrations = $this->paginate($this->Registrations
                     ->find()
-                    ->where(['Students.schoolId' => $this->getUser()->id, 'Students.registrationId' => $actualEdition->id]));
+                    ->where(['Registrations.userId' => $this->getUser()->id, 'Registrations.id' => $actualEdition->id]));
                 }        
             }
         } else {
@@ -47,7 +47,7 @@ class RegistrationsController extends AppController
             } else {
                 $registrations = $this->paginate($this->Registrations
                 ->find()
-                ->where(['Students.schoolId' => $this->getUser()->id, 'Students.registrationId' => $editionID]));
+                ->where(['Registrations.userId' => $this->getUser()->id, 'Registrations.id' => $actualEdition->id]));
             }
         }
 

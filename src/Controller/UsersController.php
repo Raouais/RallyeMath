@@ -77,10 +77,12 @@ class UsersController extends AppController
                 $user->isAdmin = 0;
             }
             
-            if($this->request->getData('password_confirm') !== $this->request->getData('password')){
+            if(!$this->emailRegex($this->request->getData('email'))){
+                $this->Flash->error(__("Vous devez entrer un mail qui fini par hers.be"));
+            } else if($this->request->getData('password_confirm') !== $this->request->getData('password')){
                 $this->Flash->error(__('Les mots de passes doivent être identiques.'));
             } else if ($this->Users->save($user)) {
-                $this->sendEmail($user->email);
+                //$this->sendEmail($user->email);
                 $this->Flash->success(__("L'utilisateur a été ajouté avec succès"));
                 if($this->Authentication->getResult()->isValid()){
                     return $this->redirect(['controller' => 'pages', 'action' => 'home']);
@@ -92,6 +94,12 @@ class UsersController extends AppController
 
         $this->set(compact('user'));
     }
+
+    private function emailRegex($userEmail){
+        $pattern = "/(@[a-zA-Z]*.hers.be)$|(@hers.be)$/i";
+        preg_match($pattern, $userEmail); 
+    }
+
 
     private function sendEmail($userEmail){
         $email = new Email('default');
