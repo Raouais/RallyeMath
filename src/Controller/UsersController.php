@@ -76,6 +76,10 @@ class UsersController extends AppController
             if(!$this->Authentication->getResult()->isValid()){
                 $user->isAdmin = 0;
             }
+
+            if($this->request->getData('others') != null){
+                $user->civility = $this->request->getData('others');
+            }
             
             if(!$this->emailRegex($this->request->getData('email'))){
                 $this->Flash->error(__("Vous devez entrer un mail qui fini par hers.be"));
@@ -100,7 +104,6 @@ class UsersController extends AppController
         return preg_match($pattern, $userEmail) == 1; 
     }
 
-
     private function sendEmail($userEmail){
         $email = new Email('default');
         $email->setFrom(["rallye.math@hers.be" => 'Site RallyMath'])
@@ -124,10 +127,15 @@ class UsersController extends AppController
         if(!$this->authorize($user)) return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
-            if($this->request->getData('password_confirm') !== $this->request->getData('password')){
+
+            if($this->request->getData('others') != null){
+                $user->civility = $this->request->getData('others');
+            }
+
+            if(!empty($this->request->getData('password_confirm')) && $this->request->getData('password_confirm') !== $this->request->getData('password')){
                 $this->Flash->error(__('Les mots de passes doivent être identiques.'));
             } else if ($this->Users->save($user)) {
-                $this->Flash->success(__("L'utilisateur a été ajouté avec succès"));
+                $this->Flash->success(__("L'utilisateur a été modifié avec succès"));
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__("'L'utilisateur n'a pas pu être modifié. Veuillez réessayer s'il vous plaît.'"));

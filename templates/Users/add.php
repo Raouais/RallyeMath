@@ -8,6 +8,15 @@ if(!isset($isAdmin)){
     $isAdmin = false;
     $is = false;
 }
+
+
+$civilities = [
+    "Madame" => "Madame",
+    "Monsieur" => "Monsieur",
+    "Mademoiselle" => "Mademoiselle",
+    "others" => "Autres"
+];
+
 ?>
 <div class="row">
     <aside class="column">
@@ -37,7 +46,9 @@ if(!isset($isAdmin)){
                         echo $this->Form->select('isAdmin',[1 => 'Oui', 0 => 'Non']);
                     }
                     echo $this->Form->label("Civilité");
-                    echo $this->Form->select('civility',[ 1 => "Mme.", 2 => "M."]);
+                    echo $this->Form->select('civility', $civilities, ['id' => 'civility']);
+                    echo '<div id="others"></div>';
+                    echo $this->Html->script('others');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

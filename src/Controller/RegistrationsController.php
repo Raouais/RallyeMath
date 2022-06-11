@@ -23,35 +23,35 @@ class RegistrationsController extends AppController
         $editionsTable = $this->getTableLocator()->get('Editions');
         $editions = $this->paginate($editionsTable->find('all'));
         $registrations = [];
-        
+        $isAdmin = $this->getUser()->isAdmin;
+
         if(!empty($editions)){
             $actualEdition = $this->getActualEdition($editions);
             if(isset($actualEdition)){
-                if($this->getUser()->isAdmin){
-                    $registrations = $this->paginate($this->Registrations->findById($actualEdition->id));
+                if($isAdmin){
+                    $registrations = $this->paginate($this->Registrations->findByEditionid($actualEdition->id));
                 } else {
                     $registrations = $this->paginate($this->Registrations
                     ->find()
-                    ->where(['Registrations.userId' => $this->getUser()->id, 'Registrations.id' => $actualEdition->id]));
+                    ->where(['Registrations.userId' => $this->getUser()->id, 'Registrations.editionId' => $actualEdition->id]));
                 }        
             }
         } else {
             $showNoEditions = "Il n'y pas encore d'inscription car aucune édition n'a été créée.";
             $this->set(compact('showNoEditions'));
         }
-
+        
         if($this->request->is('post')) {
             $editionID = $this->request->getData('edition');
-            if($this->getUser()->isAdmin){
-                $registrations = $this->paginate($this->Registrations->findById($editionID));
+            if($isAdmin){
+                $registrations = $this->paginate($this->Registrations->findByEditionid($editionID));
             } else {
                 $registrations = $this->paginate($this->Registrations
                 ->find()
-                ->where(['Registrations.userId' => $this->getUser()->id, 'Registrations.id' => $editionID]));
+                ->where(['Registrations.userId' => $this->getUser()->id, 'Registrations.editionId' => $editionID]));
             }
         }
 
-        $isAdmin = $this->getUser()->isAdmin;
         $registration = new Registration();
         $this->set(compact('registration'));
         $this->set(compact('isAdmin'));

@@ -31,7 +31,7 @@
                     <td><?= h($user->email) ?></td>
                     <td><?= h($user->function) ?></td>
                     <td><?= h($user->phone) ?></td>
-                    <td><?= h($user->civility == 1 ? "Mme." : "M.") ?></td>
+                    <td><?= h($user->civility) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('Voir'), ['action' => 'view', $user->id]) ?>
                         <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $user->id]) ?>

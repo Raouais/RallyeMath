@@ -40,7 +40,7 @@
                 </tr>
                 <tr>
                     <th><?= __('Civilité') ?></th>
-                    <td><?= h($user->civility == 1 ? "Mme.": "M.") ?></td>
+                    <td><?= h($user->civility) ?></td>
                 </tr>
                 <?php if($isAdmin):?>
                     <tr>

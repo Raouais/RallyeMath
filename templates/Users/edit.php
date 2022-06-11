@@ -3,10 +3,13 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\User $user
  */
-$options = [
-    1 => "Mme.",
-    2 => "M."
- ]
+$civilities = [
+    "Madame" => "Madame",
+    "Monsieur" => "Monsieur",
+    "Mademoiselle" => "Mademoiselle",
+    "others" => "Autres"
+];
+
 ?>
 <div class="row">
     <aside class="column">
@@ -29,8 +32,10 @@ $options = [
                     echo $this->Form->control('lastname',['label' => 'Nom']);
                     echo $this->Form->control('firstname',['label' => 'Prénom']);
                     echo $this->Form->control('email',['label' => 'Email']);
-                    echo $this->Form->control('password',['default' => "123456", 'label' => 'Mot de passe']);
-                    echo $this->Form->control('password_confirm',['label' => 'Confirmation du mot de passe', 'type' => 'password']);
+                    if(!$isAdmin){
+                        echo $this->Form->control('password',['label' => 'Mot de passe', 'id' => 'pwd']);
+                        echo $this->Form->control('password_confirm',['label' => 'Confirmation du mot de passe', 'type' => 'password']);
+                    }
                     echo $this->Form->control('function',['label' => 'Fonction ex: (professeur, éducateur)']);
                     echo $this->Form->control('phone',['label' => 'Téléphone']);
                     if($isAdmin){
@@ -38,7 +43,9 @@ $options = [
                         echo $this->Form->select('isAdmin',[1 => 'Oui', 0 => 'Non']);
                     }
                     echo $this->Form->label("Civilité");
-                    echo $this->Form->select('civility', $options);
+                    echo $this->Form->select('civility', $civilities, ['id' => 'civility']);
+                    echo '<div id="others"></div>';
+                    echo $this->Html->script('others');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>
@@ -46,3 +53,10 @@ $options = [
         </div>
     </div>
 </div>
+
+<script>
+    let pwd = document.getElementById('pwd');
+    if(pwd.value.length > 0){
+        pwd.value = ""
+    };
+</script>
