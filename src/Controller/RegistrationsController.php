@@ -40,7 +40,7 @@ class RegistrationsController extends AppController
             $showNoEditions = "Il n'y pas encore d'inscription car aucune édition n'a été créée.";
             $this->set(compact('showNoEditions'));
         }
-        
+
         if($this->request->is('post')) {
             $editionID = $this->request->getData('edition');
             if($isAdmin){
@@ -104,7 +104,9 @@ class RegistrationsController extends AppController
             return $this->redirect(['controller' => 'Editions', 'action' => 'index']);
         }
 
-        $registrations = $this->paginate($this->Registrations->findByEditionid($editionID));
+        $registrations = $this->paginate($this->Registrations
+                ->find()
+                ->where(['Registrations.userId' => $this->getUser()->id, 'Registrations.editionId' => $editionID]));
         $editionName = $editionsTable->findById($editionID)->firstOrFail()->title;
 
         $this->set(compact('registrations'));
