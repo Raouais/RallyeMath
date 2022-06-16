@@ -25,9 +25,9 @@ class UsersController extends AppController
     {
         $this->Authorization->skipAuthorization();
         if($this->getUser()->isAdmin){
-            $users = $this->paginate($this->Users);
+            $users = $this->paginate($this->Users, ["limit" => 10]);
         } else {
-            $users = $this->paginate($this->Users->findById($this->getUser()->id));
+            $users = $this->paginate($this->Users->findById($this->getUser()->id), ["limit" => 10]);
         }
         $isAdmin = $this->getUser()->isAdmin;
 

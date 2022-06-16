@@ -41,6 +41,6 @@
             <?= $this->Paginator->numbers() ?>
             <?= $this->Paginator->next(__(' ') . ' >') ?>
         </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+        <p><?= $this->Paginator->counter(__('Page {{page}}/{{pages}}, Inscriptions {{current}}/{{count}} ')) ?></p>
     </div>
 </div>

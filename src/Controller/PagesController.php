@@ -74,7 +74,7 @@ class PagesController extends AppController
         $this->set(compact('page', 'subpage'));
         $this->Authorization->skipAuthorization();
 
-        if($page == 'home'){
+        if($page == 'home' || $page == 'unsubscribedRegistration'){
             $actualEdition = $this->getActualEdition();
             if($actualEdition != null){
                 $auth = $this->Authentication->getResult();

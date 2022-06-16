@@ -80,7 +80,7 @@ function getIcon($isOk)
 
                             if (!empty($deadline)) {
                                 foreach ($deadline as $d) {
-                                    if ($d->isLimit == true && new FrozenTime($d->enddate) > FrozenTime::now()) {
+                                    if ($d->isLimit == true && $d->enddate > FrozenTime::now()) {
                                         $hasLimit = true;
                                     }
                                 }
@@ -141,12 +141,10 @@ function getIcon($isOk)
     </div>
     <div class="paginator">
         <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
+            <?= $this->Paginator->prev('< ' . __(' ')) ?>
             <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
+            <?= $this->Paginator->next(__(' ') . ' >') ?>
         </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+        <p><?= $this->Paginator->counter(__('Page {{page}}/{{pages}}, Editions {{current}}/{{count}} ')) ?></p>
     </div>
 </div>
