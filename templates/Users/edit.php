@@ -32,6 +32,7 @@ $civilities = [
                     echo $this->Form->control('lastname',['label' => 'Nom']);
                     echo $this->Form->control('firstname',['label' => 'Prénom']);
                     echo $this->Form->control('email',['label' => 'Email']);
+                    echo $this->Form->control('password_current',['label' => 'Mot de passe actuel', 'type' => 'password']);
                     if(!$isAdmin){
                         echo $this->Form->control('password',['label' => 'Mot de passe', 'id' => 'pwd']);
                         echo $this->Form->control('password_confirm',['label' => 'Confirmation du mot de passe', 'type' => 'password']);

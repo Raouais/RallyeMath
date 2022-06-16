@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Entity\User;
+use Cake\Auth\DefaultPasswordHasher;
 use Authorization\Exception\ForbiddenException;
 use Cake\Event\EventInterface;
 use Cake\Mailer\Email;
@@ -128,11 +129,16 @@ class UsersController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
 
+            $currentPassword = $this->request->getData('password_current');
+
+            
             if($this->request->getData('others') != null){
                 $user->civility = $this->request->getData('others');
             }
 
-            if(!empty($this->request->getData('password_confirm')) && $this->request->getData('password_confirm') !== $this->request->getData('password')){
+            if($currentPassword == null || !(new DefaultPasswordHasher())->check($currentPassword,$this->getUser()->password)){
+                $this->Flash->info(__("Le mot de passe actuel n'est pas valide."));
+            } else if(!empty($this->request->getData('password_confirm')) && $this->request->getData('password_confirm') !== $this->request->getData('password')){
                 $this->Flash->error(__('Les mots de passes doivent être identiques.'));
             } else if ($this->Users->save($user)) {
                 $this->Flash->success(__("L'utilisateur a été modifié avec succès"));
