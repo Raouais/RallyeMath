@@ -6,8 +6,10 @@
 
 $options = [];
 
-foreach($students as $s){
-    $options[$s->id] = "  ".$s->lastname." ".$s->firstname; 
+if($isSchoolAlreadyCreated){
+    foreach($students as $s){
+        $options[$s->id] = "  ".$s->lastname." ".$s->firstname; 
+    }
 }
 
 ?>
@@ -26,10 +28,18 @@ foreach($students as $s){
                 <?php
                     echo $this->Form->control('team',['label' => "Nom de l'équipe"]);
                     echo '<label>Choisissez les élèves participants</label>';
-                    echo $this->Form->select(
-                        'students', 
-                        $options,
-                    ['multiple' => 'checkbox']);
+                    if($isSchoolAlreadyCreated){
+                        echo $this->Form->select(
+                            'students', 
+                            $options,
+                        ['multiple' => 'checkbox']);
+                    } else {
+                        echo $this->Form->label('Insérez les données de votre école');
+                        echo $this->Form->control('name', ['label' => 'Nom']);
+                        echo $this->Form->control('address', ['label' => 'Adresse']);
+                        echo $this->Form->control('city', ['label' => 'Ville']);
+                        echo $this->Form->control('phone', ['label' => 'Téléphone']);
+                    }
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

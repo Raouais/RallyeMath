@@ -166,38 +166,73 @@ class RegistrationsController extends AppController
         $edition = $this->getTableLocator()->get('Editions');
         $editionName = $edition->findById($editionID)->firstOrFail()->title;
 
-        // try{
-        //     $school = $this->getSchool();
-        // } catch(RecordNotFoundException $e){
-        //     $this->Flash->error(__("Vous devez créer une école avant de s'inscrire à une édition."));
-        //     return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
-        // }
+        $isSchoolAlreadyCreated = false;
 
-        // $students = $this->getTableLocator()->get('Students');
-        // $students = $students->find()->
-        //                 select(['lastname','firstname','id'])->
-        //                 where(['Students.schoolId' => $school->id, 'Students.registrationId is ' => null]);
+        try{
+            $school = $this->getSchool();
+            $isSchoolAlreadyCreated = true;
+        } catch(RecordNotFoundException $e){
+            $this->Flash->info(__("Vous devez créer une école avant de s'inscrire à une édition."));
+            //return $this->redirect(['controller' => 'Schools', 'action' => 'index']);
+        }
 
-        // if(sizeof($this->paginate($students)) == 0){
-        //     $this->Flash->error(__("Aucun élève disponible pour une inscription."));
-        //     return $this->redirect(['action' => 'index', $editionID]);
-        // }
+        if($isSchoolAlreadyCreated){
+            $students = $this->getTableLocator()->get('Students');
+            $students = $students->find()->
+                            select(['lastname','firstname','id'])->
+                            where(['Students.schoolId' => $school->id, 'Students.registrationId is ' => null]);
+            if(sizeof($this->paginate($students)) == 0){
+                $this->Flash->error(__("Aucun élève disponible pour une inscription."));
+                return $this->redirect(['action' => 'index', $editionID]);
+            }
+        }
+
 
         if ($this->request->is('post')) {
 
             $registration = $this->Registrations->patchEntity($registration, $this->request->getData());
-            
+            $isRegistrationConditionsOk = true;
+
             $registration->userId = $this->getUser()->id;
-            // $registration->schoolId = $school->id;
+            if($isSchoolAlreadyCreated){
+                $registration->schoolId = $school->id;
+                $isRegistrationConditionsOk = $this->isEditionConditionOk($this->request->getData('students'),$editionID);
+            } else {
+                $schoolName = $this->request->getData('name');
+                $schoolAddress = $this->request->getData('address');
+                $schoolCity = $this->request->getData('city');
+                $schoolPhone = $this->request->getData('phone');
+                
+                $schoolTable = $this->getTableLocator()->get('Schools');
+                $schoolQuery = $schoolTable->query();
+                $schoolQuery->insert(['name', 'address', 'city', 'phone','userId'])
+                            ->values([
+                                'name' => $schoolName,
+                                'address' => $schoolAddress,
+                                'city' => $schoolCity,
+                                'phone' => $schoolPhone,
+                                'userId' => $this->getUser()->id
+                                ])
+                            ->execute();
+                $registration->schoolId = $schoolTable->findByUserId($this->getUser()->id);
+            }
             $registration->editionId = $editionID;
 
-            if ($this->isEditionConditionOk($this->request->getData('students'),$editionID) && $this->Registrations->save($registration)) {
+            $isSchoolCheckOk = true;
+
+            if($isSchoolAlreadyCreated && $isRegistrationConditionsOk){
+                $isSchoolCheckOk = false;
+            }
+
+            if ($isSchoolCheckOk && $this->Registrations->save($registration)) {
                 $this->updateStudent($this->request->getData('students'),$registration);
                 $this->Flash->success(__("L'inscription a été ajoutée avec succès."));
                 return $this->redirect(['action' => 'index', $editionID]);
             }
             $this->Flash->error(__("L'inscription n'a pas pu être ajoutée."));
         }
+        
+        $this->set(compact('isSchoolAlreadyCreated'));
         $this->set(compact('editionID'));
         $this->set(compact('students'));
         $this->set(compact('editionName'));
