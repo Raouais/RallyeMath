@@ -1,8 +1,15 @@
 <?php
+
+use Cake\I18n\FrozenTime;
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Registration $registration
  */
+
+function formatTime($time){
+    return (new FrozenTime($time))->format('d-m-Y H:i');
+}
 ?>
 <div class="row">
     <aside class="column">
@@ -68,11 +75,11 @@
                 </tr>
                 <tr>
                     <th><?= __('Créée') ?></th>
-                    <td><?= h($registration->created) ?></td>
+                    <td><?= h(formatTime($registration->created)) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Modifiée') ?></th>
-                    <td><?= h($registration->modified) ?></td>
+                    <td><?= h(formatTime($registration->modified)) ?></td>
                 </tr>
             </table>
         </div>

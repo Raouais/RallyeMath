@@ -7,12 +7,12 @@ use Cake\I18n\FrozenTime;
  */
 
 function formatTime($time){
-    return (new FrozenTime($time))->format('d-m-Y H:i:s');
+    return (new FrozenTime($time))->format('d-m-Y H:i');
 }
 ?>
 <div class="deadlines index content">
 <?php if($isAdmin):?>
-    <?= $this->Html->link(__('New Deadline'), ['action' => 'add', $editionID], ['class' => 'button float-right']) ?>
+    <?= $this->Html->link(__('Ajouter'), ['action' => 'add', $editionID], ['class' => 'button float-right']) ?>
 <?php endif?>
     <h3><?= __('Echéances') ?></h3>
     <div class="table-responsive">
@@ -30,8 +30,8 @@ function formatTime($time){
                 <?php foreach ($deadlines as $deadline): ?>
                 <tr>
                     <td><?= h($deadline->title) ?></td>
-                    <td><?= h($deadline->startdate) ?></td>
-                    <td><?= h($deadline->enddate) ?></td>
+                    <td><?= h(formatTime($deadline->startdate)) ?></td>
+                    <td><?= h(formatTime($deadline->enddate)) ?></td>
                     <td><?= h($deadline->isLimit == 1 ? "Oui" : "Non") ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('Voir'), ['action' => 'view', $deadline->id, $editionID]) ?>

@@ -9,7 +9,7 @@ use Cake\I18n\FrozenTime;
  */
 
 function formatTime($time){
-    return (new FrozenTime($time))->format('d-m-Y H:i:s');
+    return (new FrozenTime($time))->format('d-m-Y H:i');
 }
 ?>
 <div class="row">

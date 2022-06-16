@@ -1,10 +1,14 @@
 <?php
 
+use Cake\I18n\FrozenTime;
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Edition $edition
  */
-
+function formatTime($time){
+    return (new FrozenTime($time))->format('d-m-Y H:i');
+}
 
 ?>
 <div class="row">
@@ -45,11 +49,11 @@
                 </tr>
                 <tr>
                     <th><?= __('Créée') ?></th>
-                    <td><?= h($edition->created) ?></td>
+                    <td><?= h(formatTime($edition->created)) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Modifiée') ?></th>
-                    <td><?= h($edition->modified) ?></td>
+                    <td><?= h(formatTime($edition->modified)) ?></td>
                 </tr>
                 <tr>
                     <th><?= __($this->Html->link('Echéances', ['controller' => 'deadlines', 'action' => 'index', $edition->id], ['class' => 'button'])) ?></th>
@@ -66,10 +70,10 @@
                                         <?= $d->title ?>
                                     </td>
                                     <td>
-                                        <?= h($d->startdate) ?>
+                                        <?= h(formatTime($d->startdate)) ?>
                                     </td>
                                     <td>
-                                        <?= h($d->enddate) ?>
+                                        <?= h(formatTime($d->enddate)) ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
