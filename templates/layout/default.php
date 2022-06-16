@@ -20,6 +20,7 @@ $isAdmin = null;
 if($isConnected) $isAdmin = $_SESSION['Auth']->isAdmin;
 $cakeDescription = 'RALLYE MATHÉMATIQUE';
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -80,6 +81,9 @@ $cakeDescription = 'RALLYE MATHÉMATIQUE';
                             <li class="nav-item">
                                 <?= $this->Html->link(__('Comptes'), ['controller' => 'users', 'action' => 'index'], ['class' => 'nav-link']) ?>
                             </li>
+                            <li class="nav-item">
+                                <?= $this->Html->link(__('Signature'), ['controller' => 'signatures', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                            </li>
                         <?php endif?>
                     <?php endif ?>
                     <?php if ($isAdmin !== null && !$isAdmin): ?>
@@ -139,14 +143,7 @@ $cakeDescription = 'RALLYE MATHÉMATIQUE';
     </main>
     <div class="container-fluid" style="margin-top: auto;">
         <footer id="footer" class="py-3 my-4 bg-dark ">
-            <!-- <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
-                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Features</a></li>
-                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Pricing</a></li>
-                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>
-                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
-            </ul> -->
-            <p class="text-center text-muted">© 2022 HERS, Site Web réalisé par un étudiant en informatique.</p>
+            <p class="text-center text-muted"><?= $signature ?></p>
         </footer>
     </div>
 </body>

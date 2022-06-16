@@ -46,7 +46,13 @@ class AppController extends Controller
         $this->loadComponent('Authentication.Authentication');
         $this->loadComponent('Authorization.Authorization');
 
+        //Default.php
+        
+        $signatureTable = $this->getTableLocator()->get('Signatures');
+        $signature = $signatureTable->findById(1)->firstOrFail();
 
+        $signature = $signature->text;
+        $this->set(compact('signature'));
         /*
          * Enable the following component for recommended CakePHP form protection settings.
          * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
